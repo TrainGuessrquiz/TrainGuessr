@@ -3,11 +3,10 @@ body {
     text-align: center;
     background-color: #0d1a26; /* 深い夜空の色 */
     color: #e0e6ed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .container {
@@ -89,25 +88,20 @@ h1 {
 }
 
 /* ★★★ スタート画面のスタイル ★★★ */
-.start-screen {
-    text-align: center;
-    color: #e0e6ed;
-    background-image: url('./images/background.jpg'); /* 背景画像を指定 */
+.start-screen .main-content {
+    background-image: url('../../background.jpg'); /* 背景画像を指定 */
     background-size: cover; /* 要素の大きさに合わせて画像をリサイズ */
     background-position: center; /* 画像を中央に配置 */
     background-repeat: no-repeat; /* 画像を繰り返さない */
-    padding: 40px 60px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-.start-screen h1 {
+.start-screen .main-content h1 {
     font-size: 4em;
     color: #00bfff;
     text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
 }
 
-.start-screen .description {
+.start-screen .main-content .description {
     font-size: 1.5em;
     margin-bottom: 30px;
 }
@@ -126,6 +120,104 @@ h1 {
 #start-button:hover {
     background-color: #0099cc;
     transform: translateY(-2px);
+}
+
+/* ランキングパネルのスタイル */
+#start-screen, #result-screen {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#game-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 400px;
+    max-width: 600px;
+    background-color: #1a2a3a;
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid #3c546b;
+}
+
+.ranking-panel {
+    background-color: #1a2a3a;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #3c546b;
+    min-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.ranking-panel h3 {
+    color: #00bfff;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    text-align: center;
+    text-shadow: 0 0 5px #00bfff;
+}
+
+.ranking-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background-color: #2b3d4f;
+    border-radius: 5px;
+    border-left: 3px solid #00bfff;
+}
+
+.ranking-item.current-user {
+    border-left-color: #fff200;
+    background-color: #3d4f2b;
+}
+
+.ranking-rank {
+    font-weight: bold;
+    color: #fff200;
+    min-width: 30px;
+}
+
+.ranking-name {
+    flex: 1;
+    text-align: left;
+    margin-left: 10px;
+}
+
+.ranking-score {
+    font-weight: bold;
+    color: #00bfff;
+}
+
+#username-input {
+    font-size: 1.2em;
+    padding: 10px;
+    border: 2px solid #5a738a;
+    border-radius: 8px;
+    width: 250px;
+    background-color: #2b3d4f;
+    color: #e0e6ed;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+#username-input:focus {
+    border-color: #00bfff;
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+    outline: none;
 }
 
 /* 画面を非表示にするクラス */

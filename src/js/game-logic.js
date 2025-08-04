@@ -27,7 +27,7 @@ const quizData = [
         lines: ["山手線", "京浜東北線", "常磐線", "宇都宮線", "高崎線", "上野東京ライン", "東北新幹線", "上越新幹線", "北陸新幹線", "東京メトロ銀座線", "東京メトロ日比谷線"],
         answer: "上野"
     },
-        {
+    {
         lines: ["山手線", "京浜東北線", "東海道線", "横須賀線", "東京メトロ銀座線", "都営浅草線", "ゆりかもめ"],
         answer: "新橋"
     },
@@ -71,43 +71,27 @@ function shuffleArray(array) {
 const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 let konamiCodePosition = 0;
 
-const questionEl = document.getElementById('question');
-const inputBox = document.getElementById('input-box');
-const submitButton = document.getElementById('submit-button');
-const resultEl = document.getElementById('result');
-const timerEl = document.getElementById('timer');
-const scoreEl = document.getElementById('score');
-
-const startScreenEl = document.getElementById('start-screen');
-const gameScreenEl = document.getElementById('game-screen');
-const startButton = document.getElementById('start-button');
-const restartButton = document.getElementById('restart-button');
-
-const resultScreenEl = document.getElementById('result-screen');
-const finalResultsEl = document.getElementById('final-results');
-
 let currentQuizIndex = 0;
 let timeLeft = 30;
 let timerId;
 let score = 0;
 let correctCount = 0;
 let incorrectCount = 0;
+let currentUsername = '';
 
 function updateScoreDisplay() {
-    if (scoreEl) {
-        scoreEl.textContent = `スコア: ${score}点`;
-    }
+    document.getElementById('score').textContent = `スコア: ${score}点`;
 }
 
 function startTimer() {
     timerId = setInterval(() => {
         timeLeft--;
-        timerEl.textContent = `残り時間: ${timeLeft}秒`;
+        document.getElementById('timer').textContent = `残り時間: ${timeLeft}秒`;
         if (timeLeft <= 0) {
             clearInterval(timerId);
             const correctAnswer = quizData[currentQuizIndex].answer;
-            resultEl.textContent = `時間切れ！正解は「${correctAnswer}」でした。`;
-            submitButton.disabled = true;
+            document.getElementById('result').textContent = `時間切れ！正解は「${correctAnswer}」でした。`;
+            document.getElementById('submit-button').disabled = true;
             incorrectCount++;
         }
     }, 1000);
@@ -115,30 +99,12 @@ function startTimer() {
 
 function showQuiz(index) {
     const quiz = quizData[index];
-    questionEl.textContent = quiz.lines.join('、');
-    inputBox.value = '';
-    resultEl.textContent = '';
-    inputBox.disabled = false;
-    submitButton.disabled = false;
-    restartButton.classList.add('hidden');
-    inputBox.focus();
-}
-
-function startGame() {
-    startScreenEl.classList.add('hidden');
-    gameScreenEl.classList.remove('hidden');
-    resultScreenEl.classList.add('hidden');
-
-    shuffleArray(quizData);
-    
-    currentQuizIndex = 0;
-    timeLeft = 30;
-    score = 0;
-    correctCount = 0;
-    incorrectCount = 0;
-    showQuiz(currentQuizIndex);
-    startTimer();
-    updateScoreDisplay();
+    document.getElementById('question').textContent = quiz.lines.join('、');
+    document.getElementById('input-box').value = '';
+    document.getElementById('result').textContent = '';
+    document.getElementById('input-box').disabled = false;
+    document.getElementById('submit-button').disabled = false;
+    document.getElementById('input-box').focus();
 }
 
 function moveToNextQuiz() {
@@ -155,87 +121,95 @@ function moveToNextQuiz() {
 }
 
 function endGame() {
-    gameScreenEl.classList.add('hidden');
-    resultScreenEl.classList.remove('hidden');
-    finalResultsEl.innerHTML = `
-        <p>正解数: ${correctCount}問</p>
-        <p>不正解数: ${incorrectCount}問</p>
-        <h3>最終スコア: ${score}点</h3>
-    `;
+    localStorage.setItem('gameResult', JSON.stringify({
+        username: currentUsername,
+        score: score,
+        correctCount: correctCount,
+        incorrectCount: incorrectCount
+    }));
+    window.location.href = 'result.html';
 }
 
-startButton.addEventListener('click', () => {
-    startGame();
-});
+function initGame() {
+    currentUsername = localStorage.getItem('currentUsername');
+    if (!currentUsername) {
+        window.location.href = 'start.html';
+        return;
+    }
+    
+    shuffleArray(quizData);
+    currentQuizIndex = 0;
+    timeLeft = 30;
+    score = 0;
+    correctCount = 0;
+    incorrectCount = 0;
+    
+    showQuiz(currentQuizIndex);
+    startTimer();
+    updateScoreDisplay();
+}
 
-restartButton.addEventListener('click', () => {
-    startGame();
-});
-
-submitButton.addEventListener('click', () => {
-    const userAnswer = inputBox.value.trim().toLowerCase();
+document.getElementById('submit-button').addEventListener('click', () => {
+    const userAnswer = document.getElementById('input-box').value.trim().toLowerCase();
     const currentQuiz = quizData[currentQuizIndex];
     const correctAnswer = currentQuiz.answer.toLowerCase();
     
-    // 隠しページ遷移の判定
     if (currentQuiz.answer === "六本木" && userAnswer === "ぎろっぽん") {
         window.location.href = "https://www.notion.so/Tokyo-ver-1-1d104f40304880d6aa87fa46f6ce4778";
         return;
     } 
-    // ★★★ 飯田橋の隠しページ遷移を追加 ★★★
     else if (currentQuiz.answer === "飯田橋" && userAnswer === "いいだばし") {
         window.location.href = "https://www.instagram.com/canalcafe_official/";
         return;
     }
-    // ★★★ 銀座の隠しページ遷移を追加 ★★★
     else if (currentQuiz.answer === "銀座" && userAnswer === "ざぎん") {
         window.location.href = "https://ginza-kiyota.com/";
         return;
     }
 
     if (userAnswer === correctAnswer) {
-        resultEl.textContent = `正解です！`;
+        document.getElementById('result').textContent = `正解です！`;
         score++;
         correctCount++;
         updateScoreDisplay();
     } else {
-        resultEl.textContent = `残念、不正解です。`;
+        document.getElementById('result').textContent = `残念、不正解です。`;
         incorrectCount++;
     }
 
-    resultEl.textContent += ` 正解は「${currentQuiz.answer}」でした。`;
+    document.getElementById('result').textContent += ` 正解は「${currentQuiz.answer}」でした。`;
     
-    inputBox.disabled = true;
-    submitButton.disabled = true;
+    document.getElementById('input-box').disabled = true;
+    document.getElementById('submit-button').disabled = true;
 });
 
 document.addEventListener('keyup', (event) => {
-    if (!gameScreenEl.classList.contains('hidden')) {
-        const key = event.key;
+    const key = event.key;
+    
+    if (key === konamiCode[konamiCodePosition]) {
+        konamiCodePosition++;
         
-        if (key === konamiCode[konamiCodePosition]) {
-            konamiCodePosition++;
-            
-            if (konamiCodePosition === konamiCode.length) {
-                score += 100;
-                updateScoreDisplay();
-                konamiCodePosition = 0;
-                resultEl.textContent = `隠しコマンド成功！スコアが100点アップしました！`;
-            }
-        } else {
+        if (konamiCodePosition === konamiCode.length) {
+            score += 100;
+            updateScoreDisplay();
             konamiCodePosition = 0;
+            document.getElementById('result').textContent = `隠しコマンド成功！スコアが100点アップしました！`;
         }
-        
-        if (key === 'Enter') {
-            if (!inputBox.disabled && inputBox.value.trim() !== '') {
-                submitButton.click();
-            } 
-            else if (inputBox.disabled) {
-                moveToNextQuiz();
-            } 
-            else {
-                inputBox.focus();
-            }
+    } else {
+        konamiCodePosition = 0;
+    }
+    
+    if (key === 'Enter') {
+        if (!document.getElementById('input-box').disabled && document.getElementById('input-box').value.trim() !== '') {
+            document.getElementById('submit-button').click();
+        } 
+        else if (document.getElementById('input-box').disabled) {
+            moveToNextQuiz();
+        } 
+        else {
+            document.getElementById('input-box').focus();
         }
     }
 });
+
+document.addEventListener('DOMContentLoaded', initGame);

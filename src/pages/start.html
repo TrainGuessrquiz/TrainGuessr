@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路線パズル - スタート</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="start-screen">
+        <div class="main-content">
+            <h1>どの駅でしょう？</h1>
+            <p>画面の指示に合わせて、キーボードで駅名を入力してください。</p>
+            <p>（スペースキーで回答、次の問題へ進めます。）</p>
+            <input type="text" id="username-input" placeholder="ユーザー名を入力" maxlength="20">
+            <button id="start-button">ゲーム開始</button>
+        </div>
+        <div class="ranking-panel">
+            <h3>ランキング</h3>
+            <div id="ranking-list"></div>
+        </div>
+    </div>
+    <script src="../js/start.js"></script>
+</body>
+</html>
