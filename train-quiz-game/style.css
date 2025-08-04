@@ -1,0 +1,322 @@
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-align: center;
+    background-color: #0d1a26; /* 深い夜空の色 */
+    color: #e0e6ed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #1a2a3a; /* 半透明のビルディングのような背景色 */
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* 影で立体感を出す */
+    border: 1px solid #3c546b; /* 薄い枠線で洗練された印象に */
+}
+
+h1 {
+    font-size: 3em;
+    color: #00bfff; /* 鮮やかなネオンカラー */
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff; /* ネオンのような光の効果 */
+    letter-spacing: 2px;
+}
+
+#timer {
+    font-size: 1.8em;
+    color: #ff5e62; /* 警告色の赤色 */
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px #ff5e62;
+}
+
+#score {
+    font-size: 1.8em;
+    color: #fff200; /* 派手な金色 */
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px #fff200;
+}
+
+/* 路線マークと路線名の両方を表示する際のスタイル */
+#question.mark-quiz {
+    height: auto;
+    padding: 20px 10px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+#question.mark-quiz .line-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10px 20px;
+}
+
+#question.mark-quiz .line-mark {
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-bottom: 5px;
+}
+
+#question.mark-quiz .line-item p {
+    font-size: 0.9em;
+    margin: 0;
+}
+
+/* 路線名のみ表示する際のスタイル */
+#question.name-quiz {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: auto; /* 高さを自動調整 */
+    padding: 20px 0; /* 上下の余白を追加 */
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 30px; 
+}
+
+#question.name-quiz p {
+    margin: 5px 0;
+}
+
+
+#input-box {
+    font-size: 1.4em;
+    padding: 12px;
+    border: 2px solid #5a738a;
+    border-radius: 8px;
+    width: 300px;
+    background-color: #2b3d4f;
+    color: #e0e6ed;
+    transition: all 0.3s ease;
+}
+
+#input-box:focus {
+    border-color: #00bfff;
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+    outline: none;
+}
+
+#submit-button {
+    font-size: 1.4em;
+    padding: 12px 25px;
+    background-color: #00bfff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#submit-button:hover {
+    background-color: #0099cc;
+    transform: translateY(-2px);
+}
+
+#result {
+    font-size: 1.4em;
+    margin-top: 25px;
+    font-weight: bold;
+}
+
+/* ★★★ スタート画面とボタンのスタイル ★★★ */
+.start-screen {
+    text-align: center;
+    color: #e0e6ed;
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.start-screen h1 {
+    font-size: 4em;
+    color: #00bfff;
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+}
+
+.start-screen .description {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+.mode-selection {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.mode-button {
+    font-size: 1.5em;
+    padding: 15px 30px;
+    background-color: #00bfff;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.mode-button:hover {
+    background-color: #0099cc;
+    transform: translateY(-2px);
+}
+
+/* 隠すためのクラス */
+.hidden {
+    display: none;
+}
+
+/* 各路線のマーク画像を指定 */
+#question.mark-quiz .line-mark.yamanote {
+    background-image: url('img/JR_JY_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.chuo {
+    background-image: url('img/JR_JC_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.saikyo {
+    background-image: url('img/JR_JA_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.shonan-shinjuku {
+    background-image: url('img/JR_JS_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.keihin-tohoku {
+    background-image: url('img/JR_JK_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.tokaido {
+    background-image: url('img/JR_JT_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.yokosuka-sobu {
+    background-image: url('img/JR_JO_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.keiyo {
+    background-image: url('img/JR_JE_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.ueno-tokyo {
+    background-image: url('img/JR_JU_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.chuo-sobu {
+    background-image: url('img/JR_JB_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.joban {
+    background-image: url('img/JR_JJ_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.utsunomiya {
+    background-image: url('img/JR_JU_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.takasaki {
+    background-image: url('img/JR_JU_line_symbol.svg.png');
+}
+
+/* 新幹線 */
+#question.mark-quiz .line-mark.tohoku-shinkansen {
+    background-image: url('img/Shinkansen_Tohoku.png');
+}
+#question.mark-quiz .line-mark.tokaido-shinkansen {
+    background-image: url('img/Shinkansen_Tokaido.png');
+}
+#question.mark-quiz .line-mark.joetsu-shinkansen {
+    background-image: url('img/Shinkansen_Joetsu.png');
+}
+#question.mark-quiz .line-mark.hokuriku-shinkansen {
+    background-image: url('img/Shinkansen_Hokuriku.png');
+}
+
+/* 東京メトロ */
+#question.mark-quiz .line-mark.marunouchi {
+    background-image: url('img/Logo_of_Tokyo_Metro_Marunouchi_Line.svg.png');
+}
+#question.mark-quiz .line-mark.ginza {
+    background-image: url('img/Logo_of_Tokyo_Metro_Ginza_Line.svg.png');
+}
+#question.mark-quiz .line-mark.hanzomon {
+    background-image: url('img/Logo_of_Tokyo_Metro_Hanzomon_Line.svg.png');
+}
+#question.mark-quiz .line-mark.fukutoshin {
+    background-image: url('img/Logo_of_Tokyo_Metro_Fukutoshin_Line.svg.png');
+}
+#question.mark-quiz .line-mark.yurakucho {
+    background-image: url('img/Logo_of_Tokyo_Metro_Yurakucho_Line.svg.png');
+}
+#question.mark-quiz .line-mark.tozai {
+    background-image: url('img/Logo_of_Tokyo_Metro_Tozai_Line.svg.png');
+}
+#question.mark-quiz .line-mark.nanboku {
+    background-image: url('img/Logo_of_Tokyo_Metro_Namboku_Line.svg.png');
+}
+#question.mark-quiz .line-mark.hibiya {
+    background-image: url('img/Logo_of_Tokyo_Metro_Hibiya_Line.svg.png');
+}
+
+/* 都営 */
+#question.mark-quiz .line-mark.toei-shinjuku {
+    background-image: url('img/Toei_Shinjuku_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.toei-oedo {
+    background-image: url('img/Toei_Oedo_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.toei-asakusa {
+    background-image: url('img/Toei_Asakusa_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.toei-mita {
+    background-image: url('img/Toei_Mita_line_symbol.svg.png');
+}
+
+/* 私鉄 */
+#question.mark-quiz .line-mark.odakyu {
+    background-image: url('img/Odakyu_Line.png');
+}
+#question.mark-quiz .line-mark.keio {
+    background-image: url('img/Number_prefix_Keio-line.svg.png');
+}
+#question.mark-quiz .line-mark.keio-inokashira {
+    background-image: url('img/Number_prefix_keio-inokashira-line.svg.png');
+}
+#question.mark-quiz .line-mark.tokyu-toyoko {
+    background-image: url('img/Tokyu_TY_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.tokyu-denentoshi {
+    background-image: url('img/Tokyu_DT_line_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.tobu-tojo {
+    background-image: url('img/Tobu_Tojo_Line_(TJ)_symbol.svg.png');
+}
+#question.mark-quiz .line-mark.seibu-ikebukuro {
+    background-image: url('img/SeibuIkebukuro.svg.png');
+}
+#question.mark-quiz .line-mark.seibu-shinjuku {
+    background-image: url('img/SeibuShinjuku.svg.png');
+}
+#question.mark-quiz .line-mark.keikyu {
+    background-image: url('img/Keikyu_Line.png');
+}
+#question.mark-quiz .line-mark.tokyo-monorail {
+    background-image: url('img/Tokyo_Monorail.png');
+}
+
+/* その他 */
+#question.mark-quiz .line-mark.yurikamome {
+    background-image: url('img/Yurikamome_Line.png');
+}
+
+
+
+
+
+

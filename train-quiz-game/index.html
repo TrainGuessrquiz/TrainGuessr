@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路線クイズゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="start-screen" id="start-screen">
+            <h1>路線クイズゲーム</h1>
+            <p class="description">
+                表示された路線の情報をヒントに、駅名を当てよう！
+            </p>
+            <div class="mode-selection">
+                <button id="start-mark-button" class="mode-button">路線マーククイズ</button>
+                <button id="start-name-button" class="mode-button">路線名クイズ</button>
+            </div>
+        </div>
+
+        <div class="game-screen hidden" id="game-screen">
+            <p id="score">スコア: 0</p>
+            <p id="timer">残り時間: 30</p>
+            <h2 id="question"></h2>
+            <input type="text" id="input-box" placeholder="駅名を入力">
+            <button id="submit-button">回答</button>
+            <p id="result"></p>
+        </div>
+        
+        <div class="result-screen hidden" id="result-screen">
+            <h2>ゲーム終了！</h2>
+            <div id="final-results">
+                </div>
+            <button id="restart-button">もう一度遊ぶ</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
