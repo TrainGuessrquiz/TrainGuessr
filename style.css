@@ -92,7 +92,7 @@ h1 {
 .start-screen {
     text-align: center;
     color: #e0e6ed;
-    background-image: url('background.jpg'); /* 背景画像を指定 */
+    background-image: url('./images/background.jpg'); /* 背景画像を指定 */
     background-size: cover; /* 要素の大きさに合わせて画像をリサイズ */
     background-position: center; /* 画像を中央に配置 */
     background-repeat: no-repeat; /* 画像を繰り返さない */
