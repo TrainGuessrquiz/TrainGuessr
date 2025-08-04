@@ -1,25 +1,5 @@
-function saveScore(username, score) {
-    const rankings = getRankings();
-    const newEntry = {
-        username: username,
-        score: score,
-        date: new Date().toISOString()
-    };
-    
-    rankings.push(newEntry);
-    rankings.sort((a, b) => b.score - a.score);
-    
-    const topRankings = rankings.slice(0, 50);
-    localStorage.setItem('trainGuesserRankings', JSON.stringify(topRankings));
-}
-
-function getRankings() {
-    const saved = localStorage.getItem('trainGuesserRankings');
-    return saved ? JSON.parse(saved) : [];
-}
-
-function displayRankings(container, highlightUser = null) {
-    const rankings = getRankings();
+async function displayRankings(container, highlightUser = null) {
+    const rankings = await getRankings();
     const topRankings = rankings.slice(0, 10);
     
     container.innerHTML = '';
@@ -47,7 +27,7 @@ function displayRankings(container, highlightUser = null) {
     });
 }
 
-function initResult() {
+async function initResult() {
     const gameResult = localStorage.getItem('gameResult');
     if (!gameResult) {
         window.location.href = 'start.html';
@@ -55,7 +35,7 @@ function initResult() {
     }
     
     const result = JSON.parse(gameResult);
-    saveScore(result.username, result.score);
+    await saveScore(result.username, result.score);
     
     document.getElementById('final-results').innerHTML = `
         <p><strong>${result.username}</strong>さんの結果</p>
@@ -64,7 +44,7 @@ function initResult() {
         <h3>最終スコア: ${result.score}点</h3>
     `;
     
-    displayRankings(document.getElementById('ranking-list-result'), result.username);
+    await displayRankings(document.getElementById('ranking-list-result'), result.username);
     localStorage.removeItem('gameResult');
 }
 

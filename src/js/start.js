@@ -1,10 +1,5 @@
-function getRankings() {
-    const saved = localStorage.getItem('trainGuesserRankings');
-    return saved ? JSON.parse(saved) : [];
-}
-
-function displayRankings(container) {
-    const rankings = getRankings();
+async function displayRankings(container) {
+    const rankings = await getRankings();
     const topRankings = rankings.slice(0, 10);
     
     container.innerHTML = '';
@@ -48,7 +43,7 @@ document.getElementById('username-input').addEventListener('keypress', (event) =
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    displayRankings(document.getElementById('ranking-list'));
+document.addEventListener('DOMContentLoaded', async () => {
+    await displayRankings(document.getElementById('ranking-list'));
     document.getElementById('username-input').focus();
 });
