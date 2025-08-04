@@ -1,0 +1,134 @@
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-align: center;
+    background-color: #0d1a26; /* 深い夜空の色 */
+    color: #e0e6ed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #1a2a3a; /* 半透明のビルディングのような背景色 */
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* 影で立体感を出す */
+    border: 1px solid #3c546b; /* 薄い枠線で洗練された印象に */
+}
+
+h1 {
+    font-size: 3em;
+    color: #00bfff; /* 鮮やかなネオンカラー */
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff; /* ネオンのような光の効果 */
+    letter-spacing: 2px;
+}
+
+#timer {
+    font-size: 1.8em;
+    color: #ff5e62; /* 警告色の赤色 */
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px #ff5e62;
+}
+
+#score {
+    font-size: 1.8em;
+    color: #fff200; /* 派手な金色 */
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px #fff200;
+}
+
+#question {
+    font-size: 1.4em;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+#input-box {
+    font-size: 1.4em;
+    padding: 12px;
+    border: 2px solid #5a738a;
+    border-radius: 8px;
+    width: 300px;
+    background-color: #2b3d4f; /* 入力欄も暗い色に */
+    color: #e0e6ed;
+    transition: all 0.3s ease;
+}
+
+#input-box:focus {
+    border-color: #00bfff;
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+    outline: none;
+}
+
+#submit-button {
+    font-size: 1.4em;
+    padding: 12px 25px;
+    background-color: #00bfff; /* ネオンカラーのボタン */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#submit-button:hover {
+    background-color: #0099cc;
+    transform: translateY(-2px); /* ホバーで少し浮き上がる効果 */
+}
+
+#result {
+    font-size: 1.4em;
+    margin-top: 25px;
+    font-weight: bold;
+}
+
+/* ★★★ スタート画面のスタイル ★★★ */
+.start-screen {
+    text-align: center;
+    color: #e0e6ed;
+    background-image: url('background.jpg'); /* 背景画像を指定 */
+    background-size: cover; /* 要素の大きさに合わせて画像をリサイズ */
+    background-position: center; /* 画像を中央に配置 */
+    background-repeat: no-repeat; /* 画像を繰り返さない */
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.start-screen h1 {
+    font-size: 4em;
+    color: #00bfff;
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+}
+
+.start-screen .description {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+#start-button {
+    font-size: 1.8em;
+    padding: 15px 30px;
+    background-color: #00bfff;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#start-button:hover {
+    background-color: #0099cc;
+    transform: translateY(-2px);
+}
+
+/* 画面を非表示にするクラス */
+.hidden {
+    display: none;
+}
