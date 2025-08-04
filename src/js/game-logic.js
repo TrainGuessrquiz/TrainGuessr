@@ -92,6 +92,7 @@ function startTimer() {
             const correctAnswer = quizData[currentQuizIndex].answer;
             document.getElementById('result').textContent = `時間切れ！正解は「${correctAnswer}」でした。`;
             document.getElementById('submit-button').disabled = true;
+            document.getElementById('next-button').style.display = 'inline-block';
             incorrectCount++;
         }
     }, 1000);
@@ -104,6 +105,7 @@ function showQuiz(index) {
     document.getElementById('result').textContent = '';
     document.getElementById('input-box').disabled = false;
     document.getElementById('submit-button').disabled = false;
+    document.getElementById('next-button').style.display = 'none';
     document.getElementById('input-box').focus();
 }
 
@@ -181,6 +183,7 @@ document.getElementById('submit-button').addEventListener('click', () => {
     
     document.getElementById('input-box').disabled = true;
     document.getElementById('submit-button').disabled = true;
+    document.getElementById('next-button').style.display = 'inline-block';
 });
 
 document.addEventListener('keyup', (event) => {
@@ -211,5 +214,7 @@ document.addEventListener('keyup', (event) => {
         }
     }
 });
+
+document.getElementById('next-button').addEventListener('click', moveToNextQuiz);
 
 document.addEventListener('DOMContentLoaded', initGame);
