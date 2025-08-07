@@ -47,6 +47,45 @@ h1 {
     font-weight: 300;
 }
 
+.line-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.line-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 120px;
+}
+
+.line-logo {
+    height: 40px;
+    width: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+    margin-bottom: 5px;
+}
+
+.line-logo:hover {
+    transform: scale(1.05);
+}
+
+.line-name {
+    font-size: 0.8em;
+    color: #e0e6ed;
+    line-height: 1.2;
+    word-break: break-all;
+}
+
 #input-box {
     font-size: 1.4em;
     padding: 12px;
@@ -337,5 +376,22 @@ h1 {
     #question {
         font-size: 1.2em;
         line-height: 1.4;
+    }
+    
+    .line-logos {
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .line-item {
+        max-width: 80px;
+    }
+    
+    .line-logo {
+        height: 30px;
+    }
+    
+    .line-name {
+        font-size: 0.7em;
     }
 }

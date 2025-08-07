@@ -12,11 +12,11 @@ const quizData = [
         answer: "渋谷"
     },
     {
-        lines: ["山手線", "埼京線", "湘南新宿ライン", "東武東上線", "西武池袋線", "東京メトロ丸ノ内線", "有楽町線", "副都心線"],
+        lines: ["山手線", "埼京線", "湘南新宿ライン", "東武東上線", "西武池袋線", "東京メトロ丸ノ内線", "東京メトロ有楽町線", "東京メトロ副都心線"],
         answer: "池袋"
     },
     {
-        lines: ["中央総武線", "東京メトロ東西線", "南北線", "有楽町線", "都営大江戸線"],
+        lines: ["中央総武線", "東京メトロ東西線", "東京メトロ南北線", "東京メトロ有楽町線", "都営大江戸線"],
         answer: "飯田橋"
     },
     {
@@ -32,7 +32,7 @@ const quizData = [
         answer: "新橋"
     },
     {
-        lines: ["東京メトロ銀座線", "日比谷線", "丸ノ内線"],
+        lines: ["東京メトロ銀座線", "東京メトロ日比谷線", "東京メトロ丸ノ内線"],
         answer: "銀座"
     },
     {
@@ -52,11 +52,11 @@ const quizData = [
         answer: "六本木"
     },
     {
-        lines: ["東京メトロ丸ノ内線", "東西線", "千代田線", "半蔵門線", "都営三田線"],
+        lines: ["東京メトロ丸ノ内線", "東京メトロ東西線", "東京メトロ千代田線", "東京メトロ半蔵門線", "都営三田線"],
         answer: "大手町"
     },
     {
-        lines: ["東京メトロ銀座線", "丸ノ内線"],
+        lines: ["東京メトロ銀座線", "東京メトロ丸ノ内線"],
         answer: "赤坂見附"
     }
 ];
@@ -100,7 +100,31 @@ function startTimer() {
 
 function showQuiz(index) {
     const quiz = quizData[index];
-    document.getElementById('question').textContent = quiz.lines.join('、');
+    
+    // 路線ロゴと名前を表示
+    const lineLogosContainer = document.getElementById('line-logos');
+    lineLogosContainer.innerHTML = '';
+    quiz.lines.forEach(line => {
+        const lineItem = document.createElement('div');
+        lineItem.className = 'line-item';
+        
+        const img = document.createElement('img');
+        img.src = `../../images/line-logos/${line}.png`;
+        img.alt = line;
+        img.className = 'line-logo';
+        img.onerror = () => {
+            img.style.display = 'none';
+        };
+        
+        const name = document.createElement('div');
+        name.className = 'line-name';
+        name.textContent = line;
+        
+        lineItem.appendChild(img);
+        lineItem.appendChild(name);
+        lineLogosContainer.appendChild(lineItem);
+    });
+    
     document.getElementById('input-box').value = '';
     document.getElementById('result').textContent = '';
     document.getElementById('input-box').disabled = false;
