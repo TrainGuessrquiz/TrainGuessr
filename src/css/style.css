@@ -395,3 +395,32 @@ h1 {
         font-size: 0.7em;
     }
 }
+
+/* Support section styles */
+.support-section {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #e0e6ed;
+    z-index: 1000;
+}
+
+.team-logo {
+    max-width: 200px;
+    height: auto;
+    margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+    .support-section {
+        bottom: 15px;
+        right: 15px;
+        font-size: 12px;
+    }
+    
+    .team-logo {
+        max-width: 140px;
+    }
+}
