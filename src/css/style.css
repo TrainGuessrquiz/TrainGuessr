@@ -434,13 +434,14 @@ h1 {
 
 @media (max-width: 768px) {
     #hearts-container {
-        top: 15px;
-        right: 15px;
+        top: 10px;
+        right: 10px;
+        gap: 3px;
     }
     
     .heart {
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
     }
 }
 
