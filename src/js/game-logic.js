@@ -190,7 +190,7 @@ function initGame() {
     heartsRemaining = 5;
     
     // ハートをリセット
-    for (let i = 0; i < 5; i++) {
+    for (let i = 1; i < 5; i++) {
         document.getElementById(`heart-${i}`).src = '../../images/heart/heart_max.png';
     }
     
