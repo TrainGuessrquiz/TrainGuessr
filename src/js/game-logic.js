@@ -78,9 +78,20 @@ let score = 0;
 let correctCount = 0;
 let incorrectCount = 0;
 let currentUsername = '';
+let heartsRemaining = 5;
 
 function updateScoreDisplay() {
     document.getElementById('score').textContent = `スコア: ${score}点`;
+}
+
+function updateHearts() {
+    const heartIndex = 5 - heartsRemaining;
+    if (heartIndex < 5) {
+        document.getElementById(`heart-${heartIndex}`).src = '../../images/heart/heart_empty.png';
+    }
+    if (heartsRemaining <= 0) {
+        endGame();
+    }
 }
 
 function startTimer() {
@@ -93,7 +104,13 @@ function startTimer() {
             document.getElementById('result').textContent = `時間切れ！正解は「${correctAnswer}」でした。`;
             document.getElementById('submit-button').disabled = true;
             document.getElementById('next-button').style.display = 'inline-block';
+            document.getElementById('quit-button').style.display = 'inline-block';
             incorrectCount++;
+            heartsRemaining--;
+            updateHearts();
+            if (heartsRemaining <= 0) {
+                return;
+            }
         }
     }, 1000);
 }
@@ -130,6 +147,7 @@ function showQuiz(index) {
     document.getElementById('input-box').disabled = false;
     document.getElementById('submit-button').disabled = false;
     document.getElementById('next-button').style.display = 'none';
+    document.getElementById('quit-button').style.display = 'none';
     document.getElementById('input-box').focus();
 }
 
@@ -169,6 +187,12 @@ function initGame() {
     score = 0;
     correctCount = 0;
     incorrectCount = 0;
+    heartsRemaining = 5;
+    
+    // ハートをリセット
+    for (let i = 0; i < 5; i++) {
+        document.getElementById(`heart-${i}`).src = '../../images/heart/heart_max.png';
+    }
     
     showQuiz(currentQuizIndex);
     startTimer();
@@ -201,6 +225,11 @@ document.getElementById('submit-button').addEventListener('click', () => {
     } else {
         document.getElementById('result').textContent = `残念、不正解です。`;
         incorrectCount++;
+        heartsRemaining--;
+        updateHearts();
+        if (heartsRemaining <= 0) {
+            return;
+        }
     }
 
     document.getElementById('result').textContent += ` 正解は「${currentQuiz.answer}」でした。`;
@@ -208,6 +237,7 @@ document.getElementById('submit-button').addEventListener('click', () => {
     document.getElementById('input-box').disabled = true;
     document.getElementById('submit-button').disabled = true;
     document.getElementById('next-button').style.display = 'inline-block';
+    document.getElementById('quit-button').style.display = 'inline-block';
 });
 
 document.addEventListener('keyup', (event) => {
@@ -240,5 +270,6 @@ document.addEventListener('keyup', (event) => {
 });
 
 document.getElementById('next-button').addEventListener('click', moveToNextQuiz);
+document.getElementById('quit-button').addEventListener('click', endGame);
 
 document.addEventListener('DOMContentLoaded', initGame);

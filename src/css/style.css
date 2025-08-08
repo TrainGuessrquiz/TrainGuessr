@@ -297,6 +297,23 @@ h1 {
     transform: translateY(-2px);
 }
 
+#quit-button {
+    font-size: 1.4em;
+    padding: 12px 25px;
+    background-color: #ff5e62;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: none;
+}
+
+#quit-button:hover {
+    background-color: #e54347;
+    transform: translateY(-2px);
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     body {
@@ -344,7 +361,7 @@ h1 {
         margin-top: 15px;
     }
     
-    #submit-button, #next-button {
+    #submit-button, #next-button, #quit-button {
         margin: 0;
         width: 100%;
         max-width: 250px;
@@ -362,6 +379,10 @@ h1 {
     
     /* スマホでは次へボタンを表示 */
     #next-button {
+        display: inline-block;
+    }
+    
+    #quit-button {
         display: inline-block;
     }
     
@@ -393,6 +414,33 @@ h1 {
     
     .line-name {
         font-size: 0.7em;
+    }
+}
+
+/* Hearts styles */
+#hearts-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    z-index: 1000;
+}
+
+.heart {
+    width: 30px;
+    height: 30px;
+}
+
+@media (max-width: 768px) {
+    #hearts-container {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .heart {
+        width: 25px;
+        height: 25px;
     }
 }
 
