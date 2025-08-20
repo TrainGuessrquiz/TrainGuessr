@@ -10,21 +10,21 @@ const RANKINGS_FILE = path.join(__dirname, 'rankings.json');
 app.use(cors());
 app.use(express.json());
 
-// Safari対応のMIMEタイプ設定
+// モバイルブラウザ対応のMIMEタイプ設定
 app.use((req, res, next) => {
     if (req.path.endsWith('.js')) {
-        res.type('application/javascript');
+        res.type('application/javascript; charset=utf-8');
     } else if (req.path.endsWith('.css')) {
-        res.type('text/css');
+        res.type('text/css; charset=utf-8');
     } else if (req.path.endsWith('.png')) {
         res.type('image/png');
     } else if (req.path.endsWith('.jpg') || req.path.endsWith('.jpeg')) {
         res.type('image/jpeg');
     }
-    // Safari向けキャッシュ制御
-    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('Expires', '0');
+    // モバイルブラウザ向けヘッダー設定
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
 

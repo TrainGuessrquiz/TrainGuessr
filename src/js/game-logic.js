@@ -91,7 +91,7 @@ function updateScoreDisplay() {
 function updateHearts() {
     const heartIndex = 5 - heartsRemaining;
     if (heartIndex < 5) {
-        document.getElementById(`heart-${heartIndex}`).src = '../../images/heart/heart_empty.png';
+        document.getElementById(`heart-${heartIndex}`).src = '/images/heart/heart_empty.png';
     }
     if (heartsRemaining <= 0) {
         endGame();
@@ -130,7 +130,7 @@ function showQuiz(index) {
         lineItem.className = 'line-item';
         
         const img = document.createElement('img');
-        img.src = `../../images/line-logos/${line}.png`;
+        img.src = `/images/line-logos/${line}.png`;
         img.alt = line;
         img.className = 'line-logo';
         img.onerror = () => {
