@@ -10,8 +10,9 @@ const RANKINGS_FILE = path.join(__dirname, 'rankings.json');
 app.use(cors());
 app.use(express.json());
 
-// モバイルブラウザ対応のMIMEタイプ設定
+// Safari/モバイルブラウザ対応のMIMEタイプ設定
 app.use((req, res, next) => {
+    // MIMEタイプの設定
     if (req.path.endsWith('.js')) {
         res.type('application/javascript; charset=utf-8');
     } else if (req.path.endsWith('.css')) {
@@ -20,13 +21,57 @@ app.use((req, res, next) => {
         res.type('image/png');
     } else if (req.path.endsWith('.jpg') || req.path.endsWith('.jpeg')) {
         res.type('image/jpeg');
+    } else if (req.path.endsWith('.gif')) {
+        res.type('image/gif');
+    } else if (req.path.endsWith('.svg')) {
+        res.type('image/svg+xml');
+    } else if (req.path.endsWith('.webp')) {
+        res.type('image/webp');
     }
-    // モバイルブラウザ向けヘッダー設定
-    res.set('Cache-Control', 'public, max-age=3600');
+    
+    // Safari向け特別ヘッダー設定
+    res.set('Cache-Control', 'public, max-age=3600, must-revalidate');
     res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Cache-Control');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    
+    // Safari向け追加ヘッダー
+    if (req.path.includes('/images/')) {
+        res.set('Vary', 'Accept-Encoding');
+        res.set('X-Content-Type-Options', 'nosniff');
+    }
+    
     next();
 });
+
+// Safari対応: 画像ファイル専用ルート
+app.use('/images', express.static('./images', {
+    maxAge: '1h',
+    setHeaders: (res, path) => {
+        if (path.endsWith('.png')) {
+            res.setHeader('Content-Type', 'image/png');
+        } else if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+            res.setHeader('Content-Type', 'image/jpeg');
+        }
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+    }
+}));
+
+// Safari対応: JavaScriptファイル専用ルート
+app.use('/src', express.static('./src', {
+    maxAge: '1h',
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+        } else if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css; charset=utf-8');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+        }
+    }
+}));
 
 app.use(express.static('.', {
     setHeaders: (res, path) => {

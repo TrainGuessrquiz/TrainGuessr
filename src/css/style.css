@@ -1,7 +1,7 @@
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     text-align: center;
-    background-color: #0d1a26; /* 深い夜空の色 */
+    background-color: #0d1a26;
     color: #e0e6ed;
     margin: 0;
     padding: 20px;
@@ -10,23 +10,23 @@ body {
 }
 
 .container {
-    background-color: #1a2a3a; /* 半透明のビルディングのような背景色 */
+    background-color: #1a2a3a;
     padding: 40px 60px;
     border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* 影で立体感を出す */
-    border: 1px solid #3c546b; /* 薄い枠線で洗練された印象に */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid #3c546b;
 }
 
 h1 {
     font-size: 3em;
-    color: #00bfff; /* 鮮やかなネオンカラー */
-    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff; /* ネオンのような光の効果 */
+    color: #00bfff;
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
     letter-spacing: 2px;
 }
 
 #timer {
     font-size: 1.8em;
-    color: #ff5e62; /* 警告色の赤色 */
+    color: #ff5e62;
     font-weight: bold;
     margin-bottom: 25px;
     text-shadow: 0 0 8px #ff5e62;
@@ -34,7 +34,7 @@ h1 {
 
 #score {
     font-size: 1.8em;
-    color: #fff200; /* 派手な金色 */
+    color: #fff200;
     font-weight: bold;
     margin-bottom: 25px;
     text-shadow: 0 0 8px #fff200;
@@ -92,7 +92,7 @@ h1 {
     border: 2px solid #5a738a;
     border-radius: 8px;
     width: 300px;
-    background-color: #2b3d4f; /* 入力欄も暗い色に */
+    background-color: #2b3d4f;
     color: #e0e6ed;
     transition: all 0.3s ease;
 }
@@ -106,7 +106,7 @@ h1 {
 #submit-button {
     font-size: 1.4em;
     padding: 12px 25px;
-    background-color: #00bfff; /* ネオンカラーのボタン */
+    background-color: #00bfff;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -117,7 +117,7 @@ h1 {
 
 #submit-button:hover {
     background-color: #0099cc;
-    transform: translateY(-2px); /* ホバーで少し浮き上がる効果 */
+    transform: translateY(-2px);
 }
 
 #result {
@@ -126,12 +126,11 @@ h1 {
     font-weight: bold;
 }
 
-/* ★★★ スタート画面のスタイル ★★★ */
 .start-screen .main-content {
-    background-image: url('../../background.jpg'); /* 背景画像を指定 */
-    background-size: cover; /* 要素の大きさに合わせて画像をリサイズ */
-    background-position: center; /* 画像を中央に配置 */
-    background-repeat: no-repeat; /* 画像を繰り返さない */
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .start-screen .main-content h1 {
@@ -161,7 +160,6 @@ h1 {
     transform: translateY(-2px);
 }
 
-/* ランキングパネルのスタイル */
 #start-screen, #result-screen {
     display: flex;
     justify-content: center;
@@ -266,12 +264,10 @@ h1 {
     outline: none;
 }
 
-/* 画面を非表示にするクラス */
 .hidden {
     display: none;
 }
 
-/* ボタンコンテナ */
 .button-container {
     display: flex;
     gap: 15px;
@@ -279,7 +275,6 @@ h1 {
     flex-wrap: wrap;
 }
 
-/* スマホ用の次へボタン */
 #next-button {
     font-size: 1.4em;
     padding: 12px 25px;
@@ -314,7 +309,6 @@ h1 {
     transform: translateY(-2px);
 }
 
-/* レスポンシブデザイン */
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -377,7 +371,6 @@ h1 {
         max-width: 250px;
     }
     
-    /* スマホでは次へボタンを表示 */
     #next-button {
         display: inline-block;
     }
@@ -417,7 +410,6 @@ h1 {
     }
 }
 
-/* Hearts styles */
 #hearts-container {
     position: fixed;
     top: 20px;
@@ -445,7 +437,6 @@ h1 {
     }
 }
 
-/* Support section styles */
 .support-section {
     position: fixed;
     bottom: 20px;

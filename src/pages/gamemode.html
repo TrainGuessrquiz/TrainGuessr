@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路線パズル - ゲームモード選択</title>
+    <link rel="stylesheet" type="text/css" href="/src/css/style.css?v=1.0" crossorigin="anonymous">
+    <link rel="preload" as="image" href="/images/team-logo.png">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            background-color: #0d1a26;
+            color: #e0e6ed;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        h1 {
+            font-size: 3em;
+            color: #00bfff;
+            text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gamemode-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .gamemode-card {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #3c546b;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #1a2a3a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: #e0e6ed;
+        }
+
+        .gamemode-card:hover {
+            border-color: #00bfff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .gamemode-card.selected {
+            border-color: #00bfff;
+            background-color: #2b3d4f;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+
+        .gamemode-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #00bfff;
+        }
+
+        .gamemode-description {
+            color: #e0e6ed;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .start-button {
+            padding: 12px 30px;
+            font-size: 16px;
+            background-color: #00bfff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .start-button:hover {
+            background-color: #0099cc;
+        }
+
+        .start-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>ゲームモードを選択</h1>
+        <div class="gamemode-selection">
+            <div class="gamemode-card" data-mode="all">
+                <div class="gamemode-title">全問題</div>
+                <div class="gamemode-description">すべての駅が出題されます。一番難しいモードです！</div>
+            </div>
+            
+            <div class="gamemode-card" data-mode="東京23区">
+                <div class="gamemode-title">東京23区</div>
+                <div class="gamemode-description">東京23区内の駅のみが出題されます。</div>
+            </div>
+            
+            <div class="gamemode-card" data-mode="山手線">
+                <div class="gamemode-title">山手線</div>
+                <div class="gamemode-description">山手線が通る駅のみが出題されます。</div>
+            </div>
+            
+            <!-- 新しいゲームモードはここに追加 -->
+            
+            <button id="start-game-button" class="start-button" disabled>ゲーム開始</button>
+            <button id="back-button" class="back-button">戻る</button>
+        </div>
+    </div>
+
+    <div class="support-section">
+        <div>supported by</div>
+        <img src="/images/team-logo.png" alt="チームロゴ" class="team-logo">
+    </div>
+
+    <script type="application/javascript" src="/src/js/gamemode.js?v=1.0" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (typeof initGameModeSelection === 'undefined') {
+                    
+                    const cards = document.querySelectorAll('.gamemode-card');
+                    const startButton = document.getElementById('start-game-button');
+                    const backButton = document.getElementById('back-button');
+                    let selectedMode = null;
+
+                    cards.forEach(card => {
+                        card.addEventListener('click', function() {
+                            cards.forEach(c => c.classList.remove('selected'));
+                            card.classList.add('selected');
+                            selectedMode = card.getAttribute('data-mode');
+                            startButton.disabled = false;
+                        });
+                    });
+
+                    startButton.addEventListener('click', function() {
+                        if (selectedMode) {
+                            localStorage.setItem('currentGameMode', selectedMode);
+                            window.location.href = 'game.html';
+                        }
+                    });
+
+                    backButton.addEventListener('click', function() {
+                        window.location.href = 'start.html';
+                    });
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

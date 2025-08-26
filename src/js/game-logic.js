@@ -1,67 +1,83 @@
 const quizData = [
     {
         lines: ["山手線", "中央線", "埼京線", "湘南新宿ライン", "小田急線", "京王線", "東京メトロ丸ノ内線", "都営新宿線", "都営大江戸線"],
-        answer: "新宿"
+        answer: "新宿",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["山手線", "京浜東北線", "中央線", "東海道線", "横須賀・総武快速線", "京葉線", "上野東京ライン", "東北新幹線", "東海道新幹線", "東京メトロ丸ノ内線"],
-        answer: "東京"
+        answer: "東京",
+        tags: ["東京23区", "東京", "関東", "山手線", "新幹線"]
     },
     {
         lines: ["山手線", "埼京線", "湘南新宿ライン", "東急東横線", "東急田園都市線", "東京メトロ銀座線", "東京メトロ半蔵門線", "東京メトロ副都心線", "京王井の頭線"],
-        answer: "渋谷"
+        answer: "渋谷",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["山手線", "埼京線", "湘南新宿ライン", "東武東上線", "西武池袋線", "東京メトロ丸ノ内線", "東京メトロ有楽町線", "東京メトロ副都心線"],
-        answer: "池袋"
+        answer: "池袋",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["中央総武線", "東京メトロ東西線", "東京メトロ南北線", "東京メトロ有楽町線", "都営大江戸線"],
-        answer: "飯田橋"
+        answer: "飯田橋",
+        tags: ["東京23区", "東京", "関東"]
     },
     {
         lines: ["山手線", "京浜東北線", "東海道線", "横須賀線", "上野東京ライン", "京急線", "東海道新幹線"],
-        answer: "品川"
+        answer: "品川",
+        tags: ["東京23区", "東京", "関東", "山手線", "新幹線"]
     },
     {
         lines: ["山手線", "京浜東北線", "常磐線", "宇都宮線", "高崎線", "上野東京ライン", "東北新幹線", "上越新幹線", "北陸新幹線", "東京メトロ銀座線", "東京メトロ日比谷線"],
-        answer: "上野"
+        answer: "上野",
+        tags: ["東京23区", "東京", "関東", "山手線", "新幹線"]
     },
     {
         lines: ["山手線", "京浜東北線", "東海道線", "横須賀線", "東京メトロ銀座線", "都営浅草線", "ゆりかもめ"],
-        answer: "新橋"
+        answer: "新橋",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["東京メトロ銀座線", "東京メトロ日比谷線", "東京メトロ丸ノ内線"],
-        answer: "銀座"
+        answer: "銀座",
+        tags: ["東京23区", "東京", "関東"]
     },
     {
         lines: ["山手線", "京浜東北線", "東京メトロ有楽町線"],
-        answer: "有楽町"
+        answer: "有楽町",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["山手線", "埼京線", "湘南新宿ライン", "東京メトロ日比谷線"],
-        answer: "恵比寿"
+        answer: "恵比寿",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["山手線", "京浜東北線", "東京モノレール", "都営大江戸線", "都営浅草線"],
-        answer: "浜松町"
+        answer: "浜松町",
+        tags: ["東京23区", "東京", "関東", "山手線"]
     },
     {
         lines: ["東京メトロ日比谷線", "都営大江戸線"],
-        answer: "六本木"
+        answer: "六本木",
+        tags: ["東京23区", "東京", "関東"]
     },
     {
         lines: ["東京メトロ丸ノ内線", "東京メトロ東西線", "東京メトロ千代田線", "東京メトロ半蔵門線", "都営三田線"],
-        answer: "大手町"
+        answer: "大手町",
+        tags: ["東京23区", "東京", "関東"]
     },
     {
         lines: ["東京メトロ銀座線", "東京メトロ丸ノ内線"],
-        answer: "赤坂見附"
+        answer: "赤坂見附",
+        tags: ["東京23区", "東京", "関東"]
     },
     {
         lines: ["東京メトロ銀座線","東京メトロ東西線","都営浅草線"],
-        answer: "日本橋"
+        answer: "日本橋",
+        tags: ["東京23区", "東京", "関東"]
     }
 ];
 
@@ -70,6 +86,16 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+}
+
+function filterQuizDataByMode(mode) {
+    if (mode === 'all') {
+        return [...quizData];
+    }
+    
+    return quizData.filter(quiz => {
+        return quiz.tags && quiz.tags.includes(mode);
+    });
 }
 
 const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
@@ -83,6 +109,8 @@ let correctCount = 0;
 let incorrectCount = 0;
 let currentUsername = '';
 let heartsRemaining = 5;
+let currentGameMode = 'all';
+let filteredQuizData = [];
 
 function updateScoreDisplay() {
     document.getElementById('score').textContent = `スコア: ${score}点`;
@@ -104,7 +132,7 @@ function startTimer() {
         document.getElementById('timer').textContent = `残り時間: ${timeLeft}秒`;
         if (timeLeft <= 0) {
             clearInterval(timerId);
-            const correctAnswer = quizData[currentQuizIndex].answer;
+            const correctAnswer = filteredQuizData[currentQuizIndex].answer;
             document.getElementById('result').textContent = `時間切れ！正解は「${correctAnswer}」でした。`;
             document.getElementById('submit-button').disabled = true;
             document.getElementById('next-button').style.display = 'inline-block';
@@ -112,15 +140,12 @@ function startTimer() {
             incorrectCount++;
             heartsRemaining--;
             updateHearts();
-            if (heartsRemaining <= 0) {
-                return;
-            }
         }
     }, 1000);
 }
 
 function showQuiz(index) {
-    const quiz = quizData[index];
+    const quiz = filteredQuizData[index];
     
     // 路線ロゴと名前を表示
     const lineLogosContainer = document.getElementById('line-logos');
@@ -159,7 +184,7 @@ function moveToNextQuiz() {
     clearInterval(timerId);
     
     currentQuizIndex++;
-    if (currentQuizIndex < quizData.length) {
+    if (currentQuizIndex < filteredQuizData.length) {
         timeLeft = 30;
         showQuiz(currentQuizIndex);
         startTimer();
@@ -185,7 +210,18 @@ function initGame() {
         return;
     }
     
-    shuffleArray(quizData);
+    // ゲームモードを取得（デフォルトは'all'）
+    currentGameMode = localStorage.getItem('currentGameMode') || 'all';
+    
+    // 選択されたゲームモードに基づいて問題をフィルタリング
+    filteredQuizData = filterQuizDataByMode(currentGameMode);
+    
+    // フィルタリングされた問題が0個の場合は全問題を使用
+    if (filteredQuizData.length === 0) {
+        filteredQuizData = [...quizData];
+    }
+    
+    shuffleArray(filteredQuizData);
     currentQuizIndex = 0;
     timeLeft = 30;
     score = 0;
@@ -195,7 +231,7 @@ function initGame() {
     
     // ハートをリセット
     for (let i = 1; i <= 5; i++) {
-        document.getElementById(`heart-${i}`).src = '../../images/heart/heart_max.png';
+        document.getElementById(`heart-${i}`).src = '/images/heart/heart_max.png';
     }
     
     showQuiz(currentQuizIndex);
@@ -205,7 +241,7 @@ function initGame() {
 
 document.getElementById('submit-button').addEventListener('click', () => {
     const userAnswer = document.getElementById('input-box').value.trim().toLowerCase();
-    const currentQuiz = quizData[currentQuizIndex];
+    const currentQuiz = filteredQuizData[currentQuizIndex];
     const correctAnswer = currentQuiz.answer.toLowerCase();
     
     if (currentQuiz.answer === "六本木" && userAnswer === "ぎろっぽん") {

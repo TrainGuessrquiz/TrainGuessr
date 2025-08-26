@@ -32,7 +32,7 @@ function startGame() {
     }
     
     localStorage.setItem('currentUsername', username);
-    window.location.href = 'game.html';
+    window.location.href = 'gamemode.html';
 }
 
 document.getElementById('start-button').addEventListener('click', startGame);
