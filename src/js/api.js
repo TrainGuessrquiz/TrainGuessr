@@ -1,6 +1,5 @@
 const API_BASE = window.location.origin;
 
-// Socket.IO client initialization for multiplayer
 let multiplayerSocket = null;
 
 function initializeMultiplayerSocket() {
@@ -27,7 +26,6 @@ function getMultiplayerSocket() {
     return multiplayerSocket;
 }
 
-// Single player API functions
 async function getRankings() {
     try {
         const response = await fetch(`${API_BASE}/api/rankings`);
@@ -57,7 +55,6 @@ async function saveScore(username, score) {
     }
 }
 
-// Multiplayer API functions
 function createRoom(roomData) {
     const socket = getMultiplayerSocket();
     if (socket) {
@@ -100,7 +97,6 @@ function rejoinGame(gameData) {
     }
 }
 
-// New game events
 function notifyTimerExpired() {
     const socket = getMultiplayerSocket();
     if (socket) {
@@ -108,7 +104,6 @@ function notifyTimerExpired() {
     }
 }
 
-// Socket event listeners for game events
 function addGameEventListeners(callbacks) {
     const socket = getMultiplayerSocket();
     if (!socket) return;

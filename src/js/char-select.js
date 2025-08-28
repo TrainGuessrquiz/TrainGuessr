@@ -27,7 +27,6 @@ function initCharacterSelection() {
 
     usernameDisplay.textContent = username;
 
-    // Socket.IO client initialization
     socket = io();
 
     if (userRole === 'host') {
@@ -59,22 +58,17 @@ function initCharacterSelection() {
         });
     });
 
-    // Socket.IO event listeners
     socket.on('connect', () => {
-        // Socket connected
     });
 
     socket.on('disconnect', () => {
-        // Socket disconnected
     });
 
     socket.on('room-created', (data) => {
         localStorage.setItem('selectedAvatar', selectedAvatar);
-        // ルームIDをlocalStorageに保存
         if (data && data.roomId) {
             localStorage.setItem('roomId', data.roomId);
         } else {
-            // パスワードをルームIDとして使用
             localStorage.setItem('roomId', roomPassword);
         }
         window.location.href = 'waiting.html';
@@ -82,11 +76,9 @@ function initCharacterSelection() {
 
     socket.on('room-joined', (data) => {
         localStorage.setItem('selectedAvatar', selectedAvatar);
-        // ルームIDをlocalStorageに保存
         if (data && data.roomId) {
             localStorage.setItem('roomId', data.roomId);
         } else {
-            // パスワードをルームIDとして使用
             const enteredPassword = passwordInput.value.trim();
             localStorage.setItem('roomId', enteredPassword);
         }
@@ -154,7 +146,6 @@ function initCharacterSelection() {
         enterRoomButton.disabled = !canProceed;
     }
 
-    // 初期状態をチェック
     checkCanProceed();
 
     function generateRoomPassword() {

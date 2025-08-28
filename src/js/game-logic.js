@@ -147,7 +147,6 @@ function startTimer() {
 function showQuiz(index) {
     const quiz = filteredQuizData[index];
     
-    // 路線ロゴと名前を表示
     const lineLogosContainer = document.getElementById('line-logos');
     lineLogosContainer.innerHTML = '';
     quiz.lines.forEach(line => {
@@ -210,13 +209,10 @@ function initGame() {
         return;
     }
     
-    // ゲームモードを取得（デフォルトは'all'）
     currentGameMode = localStorage.getItem('currentGameMode') || 'all';
     
-    // 選択されたゲームモードに基づいて問題をフィルタリング
     filteredQuizData = filterQuizDataByMode(currentGameMode);
     
-    // フィルタリングされた問題が0個の場合は全問題を使用
     if (filteredQuizData.length === 0) {
         filteredQuizData = quizData.slice();
     }
@@ -229,7 +225,6 @@ function initGame() {
     incorrectCount = 0;
     heartsRemaining = 5;
     
-    // ハートをリセット
     for (let i = 1; i <= 5; i++) {
         document.getElementById(`heart-${i}`).src = '/images/heart/heart_max.png';
     }

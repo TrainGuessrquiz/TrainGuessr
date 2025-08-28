@@ -136,10 +136,8 @@ app.post('/api/score', (req, res) => {
     }
 });
 
-// Socket.IO multiplayer game logic
 const rooms = new Map();
 
-// Quiz data (same as game-logic.js)
 const quizData = [
     {
         lines: ["山手線", "中央線", "埼京線", "湘南新宿ライン", "小田急線", "京王線", "東京メトロ丸ノ内線", "都営新宿線", "都営大江戸線"],
@@ -227,7 +225,6 @@ function shuffleArray(array) {
     return newArray;
 }
 
-// 修正: ルーム作成関数を整理 - ゲーム開始後は削除されないよう管理
 function createRoom(password, host) {
     const room = {
         id: password,
@@ -235,8 +232,8 @@ function createRoom(password, host) {
         players: [host],
         host: host.id,
         currentQuestion: 0,
-        questions: shuffleArray(quizData).slice(0, 15), // 15問制限
-        gameState: 'waiting', // waiting -> starting -> playing -> finished
+        questions: shuffleArray(quizData).slice(0, 15),
+        gameState: 'waiting',
         timer: null,
         questionTimer: null
     };
@@ -310,7 +307,6 @@ io.on('connection', (socket) => {
         });
     });
 
-    // 修正: ゲーム再参加処理を整理
     socket.on('rejoin-game', (data) => {
         const roomIdentifier = data.roomId || data.password;
         
@@ -322,14 +318,12 @@ io.on('connection', (socket) => {
         const room = rooms.get(roomIdentifier);
         
         if (room && room.gameState === 'playing') {
-            // 既存のプレイヤー情報を復元または新規追加
             const existingPlayer = room.players.find(p => p.username === data.username);
             if (existingPlayer) {
                 existingPlayer.connected = true;
                 existingPlayer.id = socket.id;
                 existingPlayer.socketId = socket.id;
             } else {
-                // 新規プレイヤーを追加（途中参加）
                 room.players.push({
                     id: socket.id,
                     username: data.username,
@@ -347,10 +341,8 @@ io.on('connection', (socket) => {
             socket.roomId = roomIdentifier;
             socket.playerId = socket.id;
             
-            // プレイヤー情報を送信
             socket.emit('players-update', room.players);
             
-            // 他のプレイヤーにも更新を通知
             socket.to(roomIdentifier).emit('players-update', room.players);
             
             if (room.currentQuestion < room.questions.length) {
@@ -372,7 +364,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // 修正: ゲーム開始処理を整理
     socket.on('start-game', () => {
         const room = rooms.get(socket.roomId);
         
@@ -380,29 +371,24 @@ io.on('connection', (socket) => {
             return;
         }
 
-        // ゲーム開始フェーズ1: カウントダウン開始
         room.gameState = 'starting';
         io.to(socket.roomId).emit('game-starting', { countdown: 10 });
 
         setTimeout(() => {
-            // ゲーム開始フェーズ2: 実際のゲーム開始（ルーム保持重要）
             room.gameState = 'playing';
             room.currentQuestion = 0;
             
-            // ゲーム開始通知にプレイヤー情報を含める
             io.to(socket.roomId).emit('game-started', { 
                 roomId: socket.roomId,
                 players: room.players 
             });
             
-            // 追加でプレイヤー情報を明示的に送信
             if (room.players.length === 0) {
                 console.error('CRITICAL ERROR: Player list is empty when starting game!');
             }
             
             io.to(socket.roomId).emit('players-update', room.players);
             
-            // クライアントがgame-vs.htmlを読み込み、DOM初期化を完了するのに十分な時間を確保
             setTimeout(() => {
                 startQuestion(room);
             }, 1500);
@@ -422,10 +408,8 @@ io.on('connection', (socket) => {
         player.hasAnswered = true;
 
         if (isCorrect) {
-            // 整理: 正解時の処理 - ゲームを次の問題に進める
             player.score += 1;
             
-            // サーバータイマーを停止
             if (room.serverTimerId) {
                 clearInterval(room.serverTimerId);
             }
@@ -443,10 +427,8 @@ io.on('connection', (socket) => {
                 nextQuestion(room);
             }, 3000);
         } else {
-            // 整理: 不正解時の処理 - ゲームを継続し、正解を表示しない
             player.hearts = Math.max(0, player.hearts - 1);
             
-            // 不正解のプレイヤーにのみ通知（正解を表示しない）
             socket.emit('player-incorrect', {
                 message: '不正解です'
             });
@@ -457,10 +439,8 @@ io.on('connection', (socket) => {
                 });
             }
 
-            // ゲーム終了チェックはタイマー終了時のみ実行
             const activePlayers = room.players.filter(p => p.hearts > 0);
             if (activePlayers.length === 0) {
-                // 全プレイヤーが脱落した場合のみゲーム終了
                 if (room.serverTimerId) {
                     clearInterval(room.serverTimerId);
                 }
@@ -493,7 +473,6 @@ io.on('connection', (socket) => {
 
         const question = room.questions[room.currentQuestion];
         
-        // Enhanced question data with timer info
         const questionData = {
             ...question,
             questionNumber: room.currentQuestion + 1,
@@ -504,7 +483,6 @@ io.on('connection', (socket) => {
         io.to(room.id).emit('new-question', questionData);
         io.to(room.id).emit('players-update', room.players);
         
-        // 整理: サーバー管理タイマーの実装
         let timeRemaining = 30;
         
         const serverTimerId = setInterval(() => {
@@ -541,7 +519,6 @@ io.on('connection', (socket) => {
             }
         }, 1000);
         
-        // サーバータイマーIDを保存（後でクリア用）
         room.serverTimerId = serverTimerId;
     }
 
@@ -567,7 +544,6 @@ io.on('connection', (socket) => {
     }
 
     function endGame(room) {
-        // 整理: タイマー類のクリアとゲーム終了処理
         if (room.serverTimerId) {
             clearInterval(room.serverTimerId);
         }
@@ -587,13 +563,11 @@ io.on('connection', (socket) => {
             rankings: rankings
         });
         
-        // 新しいイベント: ゲーム完全終了の通知
         io.to(room.id).emit('game-ended', {
             roomId: room.id,
             finalRankings: rankings
         });
 
-        // ゲーム終了後1分でルームを削除（プレイヤーが結果を確認する時間を確保）
         setTimeout(() => {
             const currentRoom = rooms.get(room.id);
             if (currentRoom) {
@@ -610,29 +584,23 @@ io.on('connection', (socket) => {
 
         const playerIndex = room.players.findIndex(p => p.id === socket.id);
         if (playerIndex !== -1) {
-            // ゲーム中の場合はプレイヤーを削除せず、切断状態としてマーク
             if (room.gameState === 'playing') {
                 room.players[playerIndex].connected = false;
                 room.players[playerIndex].socketId = null;
                 
-                // プレイヤーリストは維持されるので、ゲーム継続可能
                 socket.leave(socket.roomId);
                 
-                // 切断プレイヤー情報を他のプレイヤーに通知
                 socket.to(socket.roomId).emit('player-disconnected', {
                     username: room.players[playerIndex].username,
                     playerId: room.players[playerIndex].id
                 });
             } else {
-                // 待機中またはゲーム終了後は従来通りプレイヤーを削除
                 room.players.splice(playerIndex, 1);
                 socket.leave(socket.roomId);
 
-                // ルーム削除の条件判定
                 if (room.players.length === 0) {
                     rooms.delete(socket.roomId);
                 } else {
-                    // ホスト変更処理
                     if (room.host === socket.id && room.players.length > 0) {
                         room.host = room.players[0].id;
                         room.players[0].isHost = true;
@@ -647,7 +615,6 @@ io.on('connection', (socket) => {
     }
 });
 
-// 整理: サーバー起動
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

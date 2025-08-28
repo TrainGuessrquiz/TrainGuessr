@@ -35,7 +35,6 @@ function initWaitingRoom() {
 
     socket = io();
 
-    // 修正: Socket接続とルーム処理を整理
     socket.on('connect', () => {
         if (isHost) {
             socket.emit('create-room', {
@@ -82,19 +81,16 @@ function initWaitingRoom() {
         startCountdown(data.countdown);
     });
 
-    // 修正: ゲーム開始イベント処理を整理
     socket.on('game-started', (data) => {
         if (!gameStarted) {
             gameStarted = true;
             
-            // ルームIDを確実に保存
             if (data && data.roomId) {
                 localStorage.setItem('roomId', data.roomId);
             } else if (roomPassword) {
                 localStorage.setItem('roomId', roomPassword);
             }
             
-            // プレイヤー情報も保存（ゲーム画面で使用）
             if (data && data.players) {
                 localStorage.setItem('gameStartPlayers', JSON.stringify(data.players));
             }
