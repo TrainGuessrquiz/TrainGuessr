@@ -2,8 +2,18 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const { Server } = require('socket.io');
+const http = require('http');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
 const PORT = 3000;
 const RANKINGS_FILE = path.join(__dirname, 'rankings.json');
 
@@ -87,7 +97,7 @@ if (!fs.existsSync(RANKINGS_FILE)) {
 }
 
 // ランキング取得API
-app.get('/api/rankings', (req, res) => {
+app.get('/api/rankings', (_, res) => {
     try {
         const rankings = JSON.parse(fs.readFileSync(RANKINGS_FILE, 'utf8'));
         const topRankings = rankings.slice(0, 50);
@@ -126,6 +136,518 @@ app.post('/api/score', (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
+// Socket.IO multiplayer game logic
+const rooms = new Map();
+
+// Quiz data (same as game-logic.js)
+const quizData = [
+    {
+        lines: ["山手線", "中央線", "埼京線", "湘南新宿ライン", "小田急線", "京王線", "東京メトロ丸ノ内線", "都営新宿線", "都営大江戸線"],
+        answer: "新宿",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["山手線", "京浜東北線", "中央線", "東海道線", "横須賀・総武快速線", "京葉線", "上野東京ライン", "東北新幹線", "東海道新幹線", "東京メトロ丸ノ内線"],
+        answer: "東京",
+        tags: ["東京23区", "東京", "関東", "山手線", "新幹線"]
+    },
+    {
+        lines: ["山手線", "埼京線", "湘南新宿ライン", "東急東横線", "東急田園都市線", "東京メトロ銀座線", "東京メトロ半蔵門線", "東京メトロ副都心線", "京王井の頭線"],
+        answer: "渋谷",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["山手線", "埼京線", "湘南新宿ライン", "東武東上線", "西武池袋線", "東京メトロ丸ノ内線", "東京メトロ有楽町線", "東京メトロ副都心線"],
+        answer: "池袋",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["中央総武線", "東京メトロ東西線", "東京メトロ南北線", "東京メトロ有楽町線", "都営大江戸線"],
+        answer: "飯田橋",
+        tags: ["東京23区", "東京", "関東"]
+    },
+    {
+        lines: ["山手線", "京浜東北線", "東海道線", "横須賀線", "上野東京ライン", "京急線", "東海道新幹線"],
+        answer: "品川",
+        tags: ["東京23区", "東京", "関東", "山手線", "新幹線"]
+    },
+    {
+        lines: ["山手線", "京浜東北線", "常磐線", "宇都宮線", "高崎線", "上野東京ライン", "東北新幹線", "上越新幹線", "北陸新幹線", "東京メトロ銀座線", "東京メトロ日比谷線"],
+        answer: "上野",
+        tags: ["東京23区", "東京", "関東", "山手線", "新幹線"]
+    },
+    {
+        lines: ["山手線", "京浜東北線", "東海道線", "横須賀線", "東京メトロ銀座線", "都営浅草線", "ゆりかもめ"],
+        answer: "新橋",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["東京メトロ銀座線", "東京メトロ日比谷線", "東京メトロ丸ノ内線"],
+        answer: "銀座",
+        tags: ["東京23区", "東京", "関東"]
+    },
+    {
+        lines: ["山手線", "京浜東北線", "東京メトロ有楽町線"],
+        answer: "有楽町",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["山手線", "埼京線", "湘南新宿ライン", "東京メトロ日比谷線"],
+        answer: "恵比寿",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["山手線", "京浜東北線", "東京モノレール", "都営大江戸線", "都営浅草線"],
+        answer: "浜松町",
+        tags: ["東京23区", "東京", "関東", "山手線"]
+    },
+    {
+        lines: ["東京メトロ日比谷線", "都営大江戸線"],
+        answer: "六本木",
+        tags: ["東京23区", "東京", "関東"]
+    },
+    {
+        lines: ["東京メトロ丸ノ内線", "東京メトロ東西線", "東京メトロ千代田線", "東京メトロ半蔵門線", "都営三田線"],
+        answer: "大手町",
+        tags: ["東京23区", "東京", "関東"]
+    },
+    {
+        lines: ["東京メトロ銀座線", "東京メトロ丸ノ内線"],
+        answer: "赤坂見附",
+        tags: ["東京23区", "東京", "関東"]
+    }
+];
+
+function shuffleArray(array) {
+    const newArray = array.slice();
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+}
+
+// 修正: ルーム作成関数を整理 - ゲーム開始後は削除されないよう管理
+function createRoom(password, host) {
+    const room = {
+        id: password,
+        password: password,
+        players: [host],
+        host: host.id,
+        currentQuestion: 0,
+        questions: shuffleArray(quizData).slice(0, 15), // 15問制限
+        gameState: 'waiting', // waiting -> starting -> playing -> finished
+        timer: null,
+        questionTimer: null
+    };
+    rooms.set(password, room);
+    return room;
+}
+
+io.on('connection', (socket) => {
+
+    socket.on('create-room', (data) => {
+        const player = {
+            id: socket.id,
+            username: data.username,
+            avatar: data.avatar,
+            score: 0,
+            hearts: 5,
+            isHost: true,
+            hasAnswered: false,
+            connected: true,
+            socketId: socket.id
+        };
+
+        const room = createRoom(data.password, player);
+        socket.join(data.password);
+        socket.roomId = data.password;
+        socket.playerId = socket.id;
+
+        socket.emit('room-created', {
+            password: data.password,
+            players: room.players
+        });
+    });
+
+    socket.on('join-room', (data) => {
+        const room = rooms.get(data.password);
+        
+        if (!room) {
+            socket.emit('room-not-found');
+            return;
+        }
+
+        if (room.players.length >= 4) {
+            socket.emit('room-full');
+            return;
+        }
+
+        const player = {
+            id: socket.id,
+            username: data.username,
+            avatar: data.avatar,
+            score: 0,
+            hearts: 5,
+            isHost: false,
+            hasAnswered: false,
+            connected: true,
+            socketId: socket.id
+        };
+
+        room.players.push(player);
+        socket.join(data.password);
+        socket.roomId = data.password;
+        socket.playerId = socket.id;
+
+        socket.emit('room-joined', {
+            password: data.password,
+            players: room.players
+        });
+
+        socket.to(data.password).emit('player-joined', {
+            players: room.players
+        });
+    });
+
+    // 修正: ゲーム再参加処理を整理
+    socket.on('rejoin-game', (data) => {
+        const roomIdentifier = data.roomId || data.password;
+        
+        if (!roomIdentifier) {
+            socket.emit('rejoin-failed', { reason: 'No room identifier' });
+            return;
+        }
+        
+        const room = rooms.get(roomIdentifier);
+        
+        if (room && room.gameState === 'playing') {
+            // 既存のプレイヤー情報を復元または新規追加
+            const existingPlayer = room.players.find(p => p.username === data.username);
+            if (existingPlayer) {
+                existingPlayer.connected = true;
+                existingPlayer.id = socket.id;
+                existingPlayer.socketId = socket.id;
+            } else {
+                // 新規プレイヤーを追加（途中参加）
+                room.players.push({
+                    id: socket.id,
+                    username: data.username,
+                    avatar: data.avatar,
+                    score: 0,
+                    hearts: 5,
+                    isHost: false,
+                    hasAnswered: false,
+                    connected: true,
+                    socketId: socket.id
+                });
+            }
+            
+            socket.join(roomIdentifier);
+            socket.roomId = roomIdentifier;
+            socket.playerId = socket.id;
+            
+            // プレイヤー情報を送信
+            socket.emit('players-update', room.players);
+            
+            // 他のプレイヤーにも更新を通知
+            socket.to(roomIdentifier).emit('players-update', room.players);
+            
+            if (room.currentQuestion < room.questions.length) {
+                const question = room.questions[room.currentQuestion];
+                
+                const questionData = {
+                    ...question,
+                    questionNumber: room.currentQuestion + 1,
+                    totalQuestions: room.questions.length,
+                    timeLimit: 30
+                };
+                
+                socket.emit('new-question', questionData);
+            }
+        } else if (!room) {
+            socket.emit('rejoin-failed', { reason: 'Room not found' });
+        } else {
+            socket.emit('rejoin-failed', { reason: 'Game not active' });
+        }
+    });
+
+    // 修正: ゲーム開始処理を整理
+    socket.on('start-game', () => {
+        const room = rooms.get(socket.roomId);
+        
+        if (!room || room.host !== socket.id || room.players.length < 2) {
+            return;
+        }
+
+        // ゲーム開始フェーズ1: カウントダウン開始
+        room.gameState = 'starting';
+        io.to(socket.roomId).emit('game-starting', { countdown: 10 });
+
+        setTimeout(() => {
+            // ゲーム開始フェーズ2: 実際のゲーム開始（ルーム保持重要）
+            room.gameState = 'playing';
+            room.currentQuestion = 0;
+            
+            // ゲーム開始通知にプレイヤー情報を含める
+            io.to(socket.roomId).emit('game-started', { 
+                roomId: socket.roomId,
+                players: room.players 
+            });
+            
+            // 追加でプレイヤー情報を明示的に送信
+            if (room.players.length === 0) {
+                console.error('CRITICAL ERROR: Player list is empty when starting game!');
+            }
+            
+            io.to(socket.roomId).emit('players-update', room.players);
+            
+            // クライアントがgame-vs.htmlを読み込み、DOM初期化を完了するのに十分な時間を確保
+            setTimeout(() => {
+                startQuestion(room);
+            }, 1500);
+        }, 10000);
+    });
+
+    socket.on('submit-answer', (data) => {
+        const room = rooms.get(socket.roomId);
+        if (!room || room.gameState !== 'playing') return;
+
+        const player = room.players.find(p => p.id === socket.id);
+        if (!player || player.hasAnswered || player.hearts <= 0) return;
+
+        const currentQuiz = room.questions[room.currentQuestion];
+        const isCorrect = data.answer === currentQuiz.answer.toLowerCase();
+
+        player.hasAnswered = true;
+
+        if (isCorrect) {
+            // 整理: 正解時の処理 - ゲームを次の問題に進める
+            player.score += 1;
+            
+            // サーバータイマーを停止
+            if (room.serverTimerId) {
+                clearInterval(room.serverTimerId);
+            }
+            if (room.questionTimer) {
+                clearTimeout(room.questionTimer);
+            }
+            
+            io.to(socket.roomId).emit('answer-result', {
+                correct: true,
+                answeredBy: player.username,
+                correctAnswer: currentQuiz.answer
+            });
+
+            setTimeout(() => {
+                nextQuestion(room);
+            }, 3000);
+        } else {
+            // 整理: 不正解時の処理 - ゲームを継続し、正解を表示しない
+            player.hearts = Math.max(0, player.hearts - 1);
+            
+            // 不正解のプレイヤーにのみ通知（正解を表示しない）
+            socket.emit('player-incorrect', {
+                message: '不正解です'
+            });
+
+            if (player.hearts <= 0) {
+                io.to(socket.roomId).emit('player-eliminated', {
+                    username: player.username
+                });
+            }
+
+            // ゲーム終了チェックはタイマー終了時のみ実行
+            const activePlayers = room.players.filter(p => p.hearts > 0);
+            if (activePlayers.length === 0) {
+                // 全プレイヤーが脱落した場合のみゲーム終了
+                if (room.serverTimerId) {
+                    clearInterval(room.serverTimerId);
+                }
+                endGame(room);
+                return;
+            }
+        }
+
+        io.to(socket.roomId).emit('players-update', room.players);
+    });
+
+    socket.on('leave-room', () => {
+        leaveRoom(socket);
+    });
+
+
+    socket.on('disconnect', () => {
+        leaveRoom(socket);
+    });
+
+    function startQuestion(room) {
+        if (room.currentQuestion >= room.questions.length) {
+            endGame(room);
+            return;
+        }
+
+        room.players.forEach(player => {
+            player.hasAnswered = false;
+        });
+
+        const question = room.questions[room.currentQuestion];
+        
+        // Enhanced question data with timer info
+        const questionData = {
+            ...question,
+            questionNumber: room.currentQuestion + 1,
+            totalQuestions: room.questions.length,
+            timeLimit: 30
+        };
+        
+        io.to(room.id).emit('new-question', questionData);
+        io.to(room.id).emit('players-update', room.players);
+        
+        // 整理: サーバー管理タイマーの実装
+        let timeRemaining = 30;
+        
+        const serverTimerId = setInterval(() => {
+            timeRemaining--;
+            
+            io.to(room.id).emit('timer-update', {
+                timeLeft: timeRemaining
+            });
+            
+            if (timeRemaining <= 0) {
+                clearInterval(serverTimerId);
+                
+                const currentQuiz = room.questions[room.currentQuestion];
+                
+                room.players.forEach(player => {
+                    if (!player.hasAnswered && player.hearts > 0) {
+                        player.hearts = Math.max(0, player.hearts - 1);
+                    }
+                });
+
+                io.to(room.id).emit('time-up', {
+                    correctAnswer: currentQuiz.answer
+                });
+
+                const activePlayers = room.players.filter(p => p.hearts > 0);
+                if (activePlayers.length === 0) {
+                    setTimeout(() => endGame(room), 3000);
+                    return;
+                }
+
+                setTimeout(() => {
+                    nextQuestion(room);
+                }, 3000);
+            }
+        }, 1000);
+        
+        // サーバータイマーIDを保存（後でクリア用）
+        room.serverTimerId = serverTimerId;
+    }
+
+    function nextQuestion(room) {
+        room.currentQuestion++;
+        
+        if (room.currentQuestion >= room.questions.length) {
+            endGame(room);
+            return;
+        }
+
+        const activePlayers = room.players.filter(p => p.hearts > 0);
+        if (activePlayers.length === 0) {
+            endGame(room);
+            return;
+        }
+
+        io.to(room.id).emit('next-question');
+        
+        setTimeout(() => {
+            startQuestion(room);
+        }, 3000);
+    }
+
+    function endGame(room) {
+        // 整理: タイマー類のクリアとゲーム終了処理
+        if (room.serverTimerId) {
+            clearInterval(room.serverTimerId);
+        }
+        if (room.questionTimer) {
+            clearTimeout(room.questionTimer);
+        }
+        room.gameState = 'finished';
+
+        const rankings = room.players.slice().sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+            return b.hearts - a.hearts;
+        });
+
+        io.to(room.id).emit('game-over', {
+            rankings: rankings
+        });
+        
+        // 新しいイベント: ゲーム完全終了の通知
+        io.to(room.id).emit('game-ended', {
+            roomId: room.id,
+            finalRankings: rankings
+        });
+
+        // ゲーム終了後1分でルームを削除（プレイヤーが結果を確認する時間を確保）
+        setTimeout(() => {
+            const currentRoom = rooms.get(room.id);
+            if (currentRoom) {
+                rooms.delete(room.id);
+            }
+        }, 60000);
+    }
+
+    function leaveRoom(socket) {
+        if (!socket.roomId) return;
+
+        const room = rooms.get(socket.roomId);
+        if (!room) return;
+
+        const playerIndex = room.players.findIndex(p => p.id === socket.id);
+        if (playerIndex !== -1) {
+            // ゲーム中の場合はプレイヤーを削除せず、切断状態としてマーク
+            if (room.gameState === 'playing') {
+                room.players[playerIndex].connected = false;
+                room.players[playerIndex].socketId = null;
+                
+                // プレイヤーリストは維持されるので、ゲーム継続可能
+                socket.leave(socket.roomId);
+                
+                // 切断プレイヤー情報を他のプレイヤーに通知
+                socket.to(socket.roomId).emit('player-disconnected', {
+                    username: room.players[playerIndex].username,
+                    playerId: room.players[playerIndex].id
+                });
+            } else {
+                // 待機中またはゲーム終了後は従来通りプレイヤーを削除
+                room.players.splice(playerIndex, 1);
+                socket.leave(socket.roomId);
+
+                // ルーム削除の条件判定
+                if (room.players.length === 0) {
+                    rooms.delete(socket.roomId);
+                } else {
+                    // ホスト変更処理
+                    if (room.host === socket.id && room.players.length > 0) {
+                        room.host = room.players[0].id;
+                        room.players[0].isHost = true;
+                    }
+
+                    socket.to(socket.roomId).emit('player-left', {
+                        players: room.players
+                    });
+                }
+            }
+        }
+    }
+});
+
+// 整理: サーバー起動
+server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

@@ -90,7 +90,7 @@ function shuffleArray(array) {
 
 function filterQuizDataByMode(mode) {
     if (mode === 'all') {
-        return [...quizData];
+        return quizData.slice();
     }
     
     return quizData.filter(quiz => {
@@ -218,7 +218,7 @@ function initGame() {
     
     // フィルタリングされた問題が0個の場合は全問題を使用
     if (filteredQuizData.length === 0) {
-        filteredQuizData = [...quizData];
+        filteredQuizData = quizData.slice();
     }
     
     shuffleArray(filteredQuizData);

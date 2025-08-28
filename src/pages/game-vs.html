@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路線パズル - 対戦モード</title>
+    <link rel="stylesheet" type="text/css" href="/src/css/style.css?v=1.0" crossorigin="anonymous">
+    <style>
+        #game-vs-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .game-content {
+            flex: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* プレイヤー情報パネル - 4分割レイアウト */
+        .players-panel {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto 0;
+            z-index: 1000;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-height: calc(100vh - 40px);
+        }
+
+        .player-window {
+            background: rgba(26, 42, 58, 0.95);
+            border: 2px solid #3c546b;
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .player-window.empty {
+            border: 2px dashed #5a738a;
+            opacity: 0.6;
+        }
+
+        .players-panel h3 {
+            color: #00bfff;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 5px #00bfff;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            background: #2b3d4f;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* === 王冠表示のスタイル（最高スコア用）=== */
+        .player-info.leader {
+            border-color: #fff200;
+            box-shadow: 0 0 15px rgba(255, 242, 0, 0.3);
+        }
+
+        .leader-crown {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 20px;
+            background: #fff200;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(255, 242, 0, 0.5);
+            animation: crownPulse 2s infinite;
+        }
+
+        @keyframes crownPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        /* === 王冠表示のスタイル終了 === */
+
+        .player-avatar {
+            font-size: 32px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #e0e6ed;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-score {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff200;
+        }
+
+        .player-hearts {
+            display: flex;
+            gap: 2px;
+            margin-top: 4px;
+        }
+
+        .heart-mini {
+            width: 12px;
+            height: 12px;
+            font-size: 10px;
+        }
+
+        .question-counter {
+            color: #00bfff;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #00bfff;
+        }
+
+        .timer-vs {
+            font-size: 2.2em;
+            color: #ff5e62;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px #ff5e62;
+        }
+
+        .answer-status {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 42, 58, 0.95);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid #3c546b;
+            z-index: 999;
+            min-width: 200px;
+            text-align: center;
+            display: none;
+        }
+
+        .answer-status.correct {
+            border-color: #4CAF50;
+            color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .answer-status.incorrect {
+            border-color: #ff5e62;
+            color: #ff5e62;
+            box-shadow: 0 0 15px rgba(255, 94, 98, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .players-panel {
+                margin-top: 30px;
+            }
+            
+            #game-vs-screen {
+                min-height: 70vh;
+                padding: 10px;
+            }
+            
+            .player-info {
+                padding: 10px;
+            }
+            
+            .player-avatar {
+                font-size: 28px;
+                margin-right: 10px;
+            }
+        }
+
+        /* ゲーム終了画面 */
+        .game-over-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .game-over-content {
+            background: #1a2a3a;
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid #00bfff;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.5);
+            text-align: center;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .final-results {
+            margin-bottom: 30px;
+        }
+
+        .winner-announcement {
+            font-size: 28px;
+            color: #fff200;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px #fff200;
+        }
+
+        .final-rankings {
+            background: #2b3d4f;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .ranking-item-final {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #3c546b;
+            border-radius: 8px;
+        }
+
+        .ranking-position {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff200;
+            width: 30px;
+            margin-right: 15px;
+        }
+
+        .home-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #00bfff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #0099cc;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div id="game-vs-screen">
+        <div class="game-content">
+            <div id="hearts-container">
+                <img src="/images/heart/heart_max.png" class="heart" id="heart-0">
+                <img src="/images/heart/heart_max.png" class="heart" id="heart-1">
+                <img src="/images/heart/heart_max.png" class="heart" id="heart-2">
+                <img src="/images/heart/heart_max.png" class="heart" id="heart-3">
+                <img src="/images/heart/heart_max.png" class="heart" id="heart-4">
+            </div>
+
+            <div class="question-counter" id="question-counter">問題 1 / 15</div>
+            <div class="timer-vs" id="timer">残り時間: 30秒</div>
+
+            <div id="line-logos" class="line-logos">
+                <!-- 路線ロゴがここに表示される -->
+            </div>
+
+            <div class="button-container">
+                <input type="text" id="input-box" placeholder="駅名を入力" maxlength="20">
+                <button id="submit-button">回答</button>
+            </div>
+
+            <div id="result"></div>
+            
+            <!-- プレイヤー情報パネル -->
+            <div class="players-panel">
+                <div class="players-grid" id="players-grid">
+                    <div class="player-window empty" id="player-slot-0">
+                        <div class="empty-message">待機中...</div>
+                    </div>
+                    <div class="player-window empty" id="player-slot-1">
+                        <div class="empty-message">待機中...</div>
+                    </div>
+                    <div class="player-window empty" id="player-slot-2">
+                        <div class="empty-message">待機中...</div>
+                    </div>
+                    <div class="player-window empty" id="player-slot-3">
+                        <div class="empty-message">待機中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回答状況表示 -->
+    <div class="answer-status" id="answer-status">
+        <div id="answer-message"></div>
+    </div>
+
+    <!-- ゲーム終了画面 -->
+    <div class="game-over-screen" id="game-over-screen">
+        <div class="game-over-content">
+            <div class="winner-announcement" id="winner-announcement"></div>
+            <div class="final-results">
+                <div class="final-rankings" id="final-rankings">
+                    <!-- 最終順位がここに表示される -->
+                </div>
+            </div>
+            <button id="home-button" class="home-button">ホームに戻る</button>
+        </div>
+    </div>
+
+    <div class="support-section">
+        <div>supported by</div>
+        <img src="/images/team-logo.png" alt="チームロゴ" class="team-logo">
+    </div>
+
+    <script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
+    <script type="application/javascript" src="/src/js/game-vs.js?v=1.0" crossorigin="anonymous"></script>
+</body>
+</html>

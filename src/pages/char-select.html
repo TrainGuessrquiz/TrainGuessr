@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路線パズル - キャラクター選択</title>
+    <link rel="stylesheet" type="text/css" href="/src/css/style.css?v=1.0" crossorigin="anonymous">
+    <style>
+        .char-selection {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .username-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .username-display {
+            font-size: 24px;
+            color: #00bfff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #00bfff;
+        }
+
+        .role-display {
+            font-size: 16px;
+            color: #fff200;
+            font-weight: bold;
+        }
+
+        .password-section {
+            background: #1a2a3a;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border: 2px solid #3c546b;
+        }
+
+        .password-display {
+            text-align: center;
+        }
+
+        .password-label {
+            font-size: 18px;
+            color: #e0e6ed;
+            margin-bottom: 15px;
+        }
+
+        .password-code {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff200;
+            letter-spacing: 8px;
+            text-shadow: 0 0 10px #fff200;
+            margin-bottom: 10px;
+        }
+
+        .password-input {
+            width: 200px;
+            padding: 15px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 4px;
+            border: 2px solid #5a738a;
+            border-radius: 8px;
+            background-color: #2b3d4f;
+            color: #e0e6ed;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            border-color: #00bfff;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            outline: none;
+        }
+
+        .avatar-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #00bfff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px #00bfff;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .avatar-option {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #3c546b;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #2b3d4f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .avatar-option:hover {
+            border-color: #00bfff;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+        }
+
+        .avatar-option.selected {
+            border-color: #fff200;
+            box-shadow: 0 0 20px rgba(255, 242, 0, 0.7);
+            transform: scale(1.15);
+        }
+
+        .avatar-img {
+            width: 80%;
+            height: 80%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .next-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #00bfff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-button:hover:not(:disabled) {
+            background-color: #0099cc;
+            transform: translateY(-2px);
+        }
+
+        .next-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #545b62;
+        }
+
+        @media (max-width: 768px) {
+            .char-selection {
+                padding: 20px 15px;
+            }
+            
+            .password-code {
+                font-size: 28px;
+                letter-spacing: 4px;
+            }
+            
+            .password-input {
+                width: 180px;
+                font-size: 20px;
+            }
+            
+            .avatar-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            .avatar-option {
+                width: 70px;
+                height: 70px;
+                min-width: 60px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+            
+            .username-display {
+                font-size: 20px;
+            }
+            
+            .button-container {
+                margin-top: 30px;
+            }
+            
+            .next-button, .back-button {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .char-selection {
+                padding: 15px 10px;
+            }
+            
+            .avatar-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                max-width: 100%;
+                padding: 0 5px;
+            }
+            
+            .avatar-option {
+                width: calc((100vw - 80px) / 4);
+                height: calc((100vw - 80px) / 4);
+                max-width: 70px;
+                max-height: 70px;
+                min-width: 55px;
+                min-height: 55px;
+            }
+            
+            .password-section {
+                padding: 20px 15px;
+                margin-bottom: 30px;
+            }
+            
+            .password-code {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            
+            .password-input {
+                width: 160px;
+                font-size: 18px;
+                padding: 12px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+            
+            .next-button, .back-button {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>キャラクター選択</h1>
+        
+        <div class="char-selection">
+            <div class="username-section">
+                <div class="username-display" id="username-display"></div>
+                <div class="role-display" id="role-display"></div>
+            </div>
+
+            <div class="password-section" id="password-section">
+                <div class="password-display" id="password-display">
+                    <div class="password-label">ルームパスワード</div>
+                    <div class="password-code" id="password-code"></div>
+                    <div style="font-size: 14px; color: #888; margin-top: 10px;">
+                        このパスワードを他のプレイヤーに共有してください
+                    </div>
+                </div>
+                <div class="password-input-container" id="password-input-container" style="display: none; text-align: center;">
+                    <div class="password-label">ルームパスワードを入力</div>
+                    <input type="text" id="password-input" class="password-input" placeholder="0000" maxlength="4">
+                </div>
+            </div>
+
+            <div class="avatar-section">
+                <div class="section-title">アバターを選択</div>
+                <div class="avatar-grid" id="avatar-grid">
+                    <div class="avatar-option" data-avatar="avatar_01.png">
+                        <img src="/images/avatars/avatar_01.png" alt="アバター1" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_02.png">
+                        <img src="/images/avatars/avatar_02.png" alt="アバター2" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_03.png">
+                        <img src="/images/avatars/avatar_03.png" alt="アバター3" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_04.png">
+                        <img src="/images/avatars/avatar_04.png" alt="アバター4" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_05.png">
+                        <img src="/images/avatars/avatar_05.png" alt="アバター5" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_06.png">
+                        <img src="/images/avatars/avatar_06.png" alt="アバター6" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_07.png">
+                        <img src="/images/avatars/avatar_07.png" alt="アバター7" class="avatar-img">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar_08.png">
+                        <img src="/images/avatars/avatar_08.png" alt="アバター8" class="avatar-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button id="enterRoomButton" class="next-button" disabled>待機室へ</button>
+                <button id="back-button" class="back-button">戻る</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="support-section">
+        <div>supported by</div>
+        <img src="/images/team-logo.png" alt="チームロゴ" class="team-logo">
+    </div>
+
+    <script src="/socket.io/socket.io.js" crossorigin="anonymous"></script>
+    <script type="application/javascript" src="/src/js/char-select.js?v=1.0" crossorigin="anonymous"></script>
+</body>
+</html>

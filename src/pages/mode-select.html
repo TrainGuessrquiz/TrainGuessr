@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路線パズル - 対戦モード選択</title>
+    <link rel="stylesheet" type="text/css" href="/src/css/style.css?v=1.0" crossorigin="anonymous">
+    <style>
+        .mode-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .mode-card {
+            width: 100%;
+            padding: 30px;
+            border: 2px solid #3c546b;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2b3d4f 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            color: #e0e6ed;
+            text-align: center;
+        }
+
+        .mode-card:hover {
+            border-color: #00bfff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, #2b3d4f 0%, #3c546b 100%);
+        }
+
+        .mode-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00bfff;
+            text-shadow: 0 0 5px #00bfff;
+        }
+
+        .mode-description {
+            color: #e0e6ed;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .mode-subtitle {
+            color: #fff200;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .back-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #545b62;
+        }
+
+        @media (max-width: 768px) {
+            .mode-card {
+                padding: 20px;
+            }
+            
+            .mode-title {
+                font-size: 20px;
+            }
+            
+            .mode-description {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>対戦モードを選択</h1>
+        <div class="mode-selection">
+            <div class="mode-card" data-mode="host">
+                <div class="mode-title">🏠 ルームを作成</div>
+                <div class="mode-description">
+                    新しい対戦ルームを作成し、他のプレイヤーを招待します。<br>
+                    ゲームの開始タイミングをコントロールできます。
+                </div>
+                <div class="mode-subtitle">ホストとしてプレイ</div>
+            </div>
+            
+            <div class="mode-card" data-mode="guest">
+                <div class="mode-title">🚪 ルームに参加</div>
+                <div class="mode-description">
+                    既存の対戦ルームに参加します。<br>
+                    4桁のパスワードを入力してルームに入室してください。
+                </div>
+                <div class="mode-subtitle">ゲストとしてプレイ</div>
+            </div>
+            
+            <button id="back-button" class="back-button">戻る</button>
+        </div>
+    </div>
+
+    <div class="support-section">
+        <div>supported by</div>
+        <img src="/images/team-logo.png" alt="チームロゴ" class="team-logo">
+    </div>
+
+    <script type="application/javascript" src="/src/js/mode-select.js?v=1.0" crossorigin="anonymous"></script>
+</body>
+</html>
