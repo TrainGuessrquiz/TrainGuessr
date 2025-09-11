@@ -144,6 +144,7 @@ function initMultiplayerGame() {
 
     // 修正: ゲーム終了処理を整理
     socket.on('game-over', (data) => {
+        console.log('Received game-over event with data:', data);
         if (!gameEnded) {
             gameEnded = true;
             showGameOverScreen(data);
@@ -314,6 +315,14 @@ function initMultiplayerGame() {
         const gameOverScreen = document.getElementById('game-over-screen');
         const winnerAnnouncement = document.getElementById('winner-announcement');
         const finalRankings = document.getElementById('final-rankings');
+        
+        if (!data || !data.rankings || data.rankings.length === 0) {
+            console.error('Invalid ranking data received:', data);
+            winnerAnnouncement.textContent = 'ゲーム終了';
+            finalRankings.innerHTML = '<div>ランキングデータが利用できません</div>';
+            gameOverScreen.style.display = 'flex';
+            return;
+        }
         
         const winner = data.rankings[0];
         winnerAnnouncement.textContent = `🏆 ${winner.username} の勝利！`;

@@ -544,6 +544,8 @@ io.on('connection', (socket) => {
     }
 
     function endGame(room) {
+        console.log(`Game ending for room ${room.id}, players:`, room.players.length);
+        
         if (room.serverTimerId) {
             clearInterval(room.serverTimerId);
         }
@@ -558,6 +560,12 @@ io.on('connection', (socket) => {
             }
             return b.hearts - a.hearts;
         });
+
+        console.log('Game ending - sending rankings:', rankings.map(p => ({
+            username: p.username,
+            score: p.score,
+            hearts: p.hearts
+        })));
 
         io.to(room.id).emit('game-over', {
             rankings: rankings
