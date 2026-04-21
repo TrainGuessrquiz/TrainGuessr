@@ -128,7 +128,7 @@ app.post('/api/score', (req, res) => {
         rankings.sort((a, b) => b.score - a.score);
         
         const topRankings = rankings.slice(0, 50);
-        fs.writeFileSync(RANKINGS_FILE, JSON.stringify(topRankings, null, 2));
+       fs.writeFileSync(RANKINGS_FILE, JSON.stringify(topRankings, null, 2));
         
         res.json({ success: true });
     } catch (error) {

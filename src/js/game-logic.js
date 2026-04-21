@@ -111,6 +111,7 @@ let currentUsername = '';
 let heartsRemaining = 5;
 let currentGameMode = 'all';
 let filteredQuizData = [];
+const ASSET_BASE_PATH = '../../images';
 
 function updateScoreDisplay() {
     document.getElementById('score').textContent = `スコア: ${score}点`;
@@ -119,7 +120,7 @@ function updateScoreDisplay() {
 function updateHearts() {
     const heartIndex = 5 - heartsRemaining;
     if (heartIndex < 5) {
-        document.getElementById(`heart-${heartIndex}`).src = '/images/heart/heart_empty.png';
+        document.getElementById(`heart-${heartIndex}`).src = `${ASSET_BASE_PATH}/heart/heart_empty.png`;
     }
     if (heartsRemaining <= 0) {
         endGame();
@@ -154,7 +155,7 @@ function showQuiz(index) {
         lineItem.className = 'line-item';
         
         const img = document.createElement('img');
-        img.src = `/images/line-logos/${line}.png`;
+        img.src = `${ASSET_BASE_PATH}/line-logos/${line}.png`;
         img.alt = line;
         img.className = 'line-logo';
         img.onerror = () => {
@@ -226,7 +227,7 @@ function initGame() {
     heartsRemaining = 5;
     
     for (let i = 1; i <= 5; i++) {
-        document.getElementById(`heart-${i}`).src = '/images/heart/heart_max.png';
+        document.getElementById(`heart-${i}`).src = `${ASSET_BASE_PATH}/heart/heart_max.png`;
     }
     
     showQuiz(currentQuizIndex);
