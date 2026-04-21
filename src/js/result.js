@@ -21,4 +21,8 @@ document.getElementById('restart-button').addEventListener('click', () => {
     window.location.href = 'start.html';
 });
 
+document.getElementById('ranking-button').addEventListener('click', () => {
+    document.getElementById('ranking-message').textContent = '準備中です';
+});
+
 document.addEventListener('DOMContentLoaded', initResult);

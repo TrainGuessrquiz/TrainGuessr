@@ -10,7 +10,20 @@ function startGame() {
     window.location.href = 'gamemode.html';
 }
 
+function showComingSoon(messageElementId) {
+    const messageElement = document.getElementById(messageElementId);
+    if (messageElement) {
+        messageElement.textContent = '準備中です';
+    }
+}
+
 document.getElementById('start-button').addEventListener('click', startGame);
+document.getElementById('multiplayer-button').addEventListener('click', () => {
+    showComingSoon('coming-soon-message');
+});
+document.getElementById('ranking-button').addEventListener('click', () => {
+    showComingSoon('ranking-message');
+});
 
 document.getElementById('username-input').addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {

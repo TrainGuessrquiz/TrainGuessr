@@ -160,6 +160,30 @@ h1 {
     transform: translateY(-2px);
 }
 
+.secondary-button {
+    font-size: 1.1em;
+    padding: 10px 18px;
+    background-color: #2b3d4f;
+    color: #e0e6ed;
+    border: 1px solid #5a738a;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, border-color 0.3s;
+}
+
+.secondary-button:hover {
+    background-color: #334b61;
+    border-color: #00bfff;
+    transform: translateY(-2px);
+}
+
+.coming-soon-message {
+    min-height: 1.4em;
+    margin: 16px 0 0;
+    color: #fff200;
+    font-weight: bold;
+}
+
 #start-screen, #result-screen {
     display: flex;
     justify-content: center;
